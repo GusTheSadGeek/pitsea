@@ -43,7 +43,6 @@
             this.CapitalNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.CapitalLabel = new System.Windows.Forms.Label();
             this.CargoSlotsLabel = new System.Windows.Forms.Label();
-            this.GoodsTable = new Pitsea.CustomDataGridView();
             this.TimestampAllButton = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,10 +51,12 @@
             this.exitWithSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAndExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GrabDataButton = new System.Windows.Forms.Button();
+            this.GoodsTable = new Pitsea.CustomDataGridView();
+            this.FindCommodityButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CargoSlotsNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CapitalNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).BeginInit();
             this.SuspendLayout();
             // 
             // SystemComboBox
@@ -196,22 +197,6 @@
             this.CargoSlotsLabel.TabIndex = 27;
             this.CargoSlotsLabel.Text = "Cargo Slots";
             // 
-            // GoodsTable
-            // 
-            this.GoodsTable.AllowUserToAddRows = false;
-            this.GoodsTable.AllowUserToDeleteRows = false;
-            this.GoodsTable.AllowUserToResizeColumns = false;
-            this.GoodsTable.AllowUserToResizeRows = false;
-            this.GoodsTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.GoodsTable.Location = new System.Drawing.Point(12, 138);
-            this.GoodsTable.Name = "GoodsTable";
-            this.GoodsTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.GoodsTable.Size = new System.Drawing.Size(755, 712);
-            this.GoodsTable.TabIndex = 0;
-            this.GoodsTable.TabStop = false;
-            this.GoodsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellContentClick);
-            this.GoodsTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellEndEdit);
-            // 
             // TimestampAllButton
             // 
             this.TimestampAllButton.Location = new System.Drawing.Point(387, 109);
@@ -281,12 +266,39 @@
             this.GrabDataButton.UseVisualStyleBackColor = true;
             this.GrabDataButton.Click += new System.EventHandler(this.GrabDataButton_Click);
             // 
+            // GoodsTable
+            // 
+            this.GoodsTable.AllowUserToAddRows = false;
+            this.GoodsTable.AllowUserToDeleteRows = false;
+            this.GoodsTable.AllowUserToResizeColumns = false;
+            this.GoodsTable.AllowUserToResizeRows = false;
+            this.GoodsTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.GoodsTable.Location = new System.Drawing.Point(12, 138);
+            this.GoodsTable.Name = "GoodsTable";
+            this.GoodsTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.GoodsTable.Size = new System.Drawing.Size(755, 712);
+            this.GoodsTable.TabIndex = 0;
+            this.GoodsTable.TabStop = false;
+            this.GoodsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellContentClick);
+            this.GoodsTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellEndEdit);
+            // 
+            // FindCommodityButton
+            // 
+            this.FindCommodityButton.Location = new System.Drawing.Point(584, 79);
+            this.FindCommodityButton.Name = "FindCommodityButton";
+            this.FindCommodityButton.Size = new System.Drawing.Size(121, 23);
+            this.FindCommodityButton.TabIndex = 31;
+            this.FindCommodityButton.Text = "Find Commodity";
+            this.FindCommodityButton.UseVisualStyleBackColor = true;
+            this.FindCommodityButton.Click += new System.EventHandler(this.FindCommodityButton_Click);
+            // 
             // Main
             // 
             this.AcceptButton = this.CalculateAllTradesButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(779, 862);
+            this.Controls.Add(this.FindCommodityButton);
             this.Controls.Add(this.GrabDataButton);
             this.Controls.Add(this.TimestampAllButton);
             this.Controls.Add(this.GoodsTable);
@@ -312,9 +324,9 @@
             this.Text = "Pitsea";
             ((System.ComponentModel.ISupportInitialize)(this.CargoSlotsNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CapitalNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -345,6 +357,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitWithSaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAndExitToolStripMenuItem;
         private System.Windows.Forms.Button GrabDataButton;
+        private System.Windows.Forms.Button FindCommodityButton;
     }
 }
 

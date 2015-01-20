@@ -88,6 +88,12 @@
       <DependentUpon>ChooseExistingCommodityDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Commodity.cs" />
+    <Compile Include="FindCommodity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FindCommodity.Designer.cs">
+      <DependentUpon>FindCommodity.cs</DependentUpon>
+    </Compile>
     <Compile Include="GameData.cs" />
     <Compile Include="GrabData.cs">
       <SubType>Form</SubType>
@@ -138,6 +144,9 @@
     <EmbeddedResource Include="ChooseExistingCommodityDialog.resx">
       <DependentUpon>ChooseExistingCommodityDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FindCommodity.resx">
+      <DependentUpon>FindCommodity.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GrabData.resx">
       <DependentUpon>GrabData.cs</DependentUpon>
     </EmbeddedResource>
@@ -172,6 +181,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="tessdata\eng.cube.bigrams" />
+    <None Include="tessdata\eng.cube.fold" />
+    <None Include="tessdata\eng.cube.lm" />
+    <None Include="tessdata\eng.cube.nn" />
+    <None Include="tessdata\eng.cube.params" />
+    <None Include="tessdata\eng.cube.size" />
+    <None Include="tessdata\eng.cube.word-freq" />
+    <None Include="tessdata\eng.tesseract_cube.nn" />
+    <None Include="tessdata\eng.traineddata" />
+    <None Include="tessdata\gus.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -11,6 +11,7 @@ namespace Pitsea
     public partial class Main : Form
     {
         private GameData gameData;
+        private GrabCommodityData grabCommodityData;
 
         private DataTable bindingTable;
 
@@ -23,6 +24,7 @@ namespace Pitsea
             this.Icon = new Icon("Graphics\\Pitsea.ico");
 
             gameData = new GameData();
+            grabCommodityData = new GrabCommodityData();
 
             SystemComboBox.Items.Clear();
             StationComboBox.Items.Clear();
@@ -183,15 +185,15 @@ namespace Pitsea
 
             GoodsTable.DataSource = bindingTable;
 
-            GoodsTable.Columns["Index"].Visible = true;
+            GoodsTable.Columns["Index"].Visible = false;
             GoodsTable.Columns["PC"].Visible = false;
 
-            //DataGridViewButtonColumn deleteColumn = new DataGridViewButtonColumn();
-            //deleteColumn.Name = "Delete";
-            //deleteColumn.HeaderText = "Delete";
-            //deleteColumn.Text = "Delete";
-            //deleteColumn.UseColumnTextForButtonValue = true;
-            //CommoditiesGrid.Columns.Insert(0, deleteColumn);
+            DataGridViewButtonColumn deleteColumn = new DataGridViewButtonColumn();
+            deleteColumn.Name = "Delete";
+            deleteColumn.HeaderText = "Delete";
+            deleteColumn.Text = "Delete";
+            deleteColumn.UseColumnTextForButtonValue = true;
+            GoodsTable.Columns.Insert(0, deleteColumn);
 
             //DataGridViewButtonColumn upColumn = new DataGridViewButtonColumn();
             //upColumn.Name = "Up";
@@ -209,12 +211,13 @@ namespace Pitsea
 
 //            CommoditiesGrid.Columns[0].Width = 50;  // Delete
 //            CommoditiesGrid.Columns[1].Width = 30;  // Delete ?
-            GoodsTable.Columns[0].Width = 100;  // Cat
-            GoodsTable.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            GoodsTable.Columns[3].Width = 50;  // Sell
-            GoodsTable.Columns[4].Width = 50; // Buy
-            GoodsTable.Columns[5].Width = 60; // Supply
-            GoodsTable.Columns[6].Width = 100; // Last Updated
+            GoodsTable.Columns[0].Width = 50;  // Delete
+            GoodsTable.Columns[2].Width = 130;  // Cat
+            GoodsTable.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            GoodsTable.Columns[4].Width = 50;  // Sell
+            GoodsTable.Columns[5].Width = 50; // Buy
+            GoodsTable.Columns[6].Width = 60; // Supply
+            GoodsTable.Columns[7].Width = 100; // Last Updated
 //            CommoditiesGrid.Columns[8].Width = 40; // Up
 //            CommoditiesGrid.Columns[9].Width = 40; // Down
 
@@ -223,7 +226,7 @@ namespace Pitsea
             foreach (DataGridViewRow row in GoodsTable.Rows)
             {
                 Color c = Color.White;
-                bool priceCheck = (bool)row.Cells[7].Value;
+                bool priceCheck = (bool)row.Cells[8].Value;
 
                 if (priceCheck)
                 {
@@ -231,7 +234,7 @@ namespace Pitsea
                 }
                 else
                 {
-                    string v = row.Cells[1].Value.ToString();
+                    string v = row.Cells[2].Value.ToString();
                     switch (v)
                     {
                         case "CHEMICALS":
@@ -337,18 +340,30 @@ namespace Pitsea
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = ".edassistant";
+            saveFileDialog.DefaultExt = ".pitdata";
             saveFileDialog.InitialDirectory = string.Concat(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"\SaveData");
             saveFileDialog.RestoreDirectory = true;
-            saveFileDialog.Filter = "Pitsea (.edassistant)|*.edassistant";
+            saveFileDialog.Filter = "Pitsea (.pitdata)|*.pitdata";
             saveFileDialog.FilterIndex = 0;
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Stream fileStream = saveFileDialog.OpenFile();
-                XmlSerializer serializer = new XmlSerializer(typeof(GameData));
-                serializer.Serialize(fileStream, gameData);
-                fileStream.Close();
+                {
+                    Stream fileStream = saveFileDialog.OpenFile();
+                    XmlSerializer serializer = new XmlSerializer(typeof(GameData));
+                    serializer.Serialize(fileStream, gameData);
+                    fileStream.Close();
+                }
+
+                {
+                    string path = Path.GetDirectoryName(saveFileDialog.FileName);
+                    string filename = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
+                    string filepath = path + @"\" + filename + ".pitcom";
+                    StreamWriter fileStream = new StreamWriter(filepath);
+                    XmlSerializer serializer = new XmlSerializer(typeof(GrabCommodityData));
+                    serializer.Serialize(fileStream, grabCommodityData);
+                    fileStream.Close();
+                }
             }
         }
 
@@ -356,10 +371,10 @@ namespace Pitsea
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.AddExtension = true;
-            openFileDialog.DefaultExt = ".edassistant";
+            openFileDialog.DefaultExt = ".pitdata";
             openFileDialog.InitialDirectory = string.Concat(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"\SaveData");
             openFileDialog.RestoreDirectory = true;
-            openFileDialog.Filter = "Pitsea (.edassistant)|*.edassistant";
+            openFileDialog.Filter = "Pitsea (.pitdata)|*.pitdata";
             openFileDialog.FilterIndex = 0;
 
             TryOpenSaveFile_Current(openFileDialog);
@@ -371,61 +386,77 @@ namespace Pitsea
             {
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Stream fileStream = openFileDialog.OpenFile();
-                    XmlSerializer serializer = new XmlSerializer(typeof(GameData));
-                    gameData = serializer.Deserialize(fileStream) as GameData;
+                    {
+                        Stream fileStream = openFileDialog.OpenFile();
+                        XmlSerializer serializer = new XmlSerializer(typeof(GameData));
+                        gameData = serializer.Deserialize(fileStream) as GameData;
 
-                    if (gameData == null)
-                        throw new Exception();
+                        if (gameData == null)
+                            throw new Exception();
 
-                    SystemComboBox.Items.Clear();
-                    StationComboBox.Items.Clear();
+                        SystemComboBox.Items.Clear();
+                        StationComboBox.Items.Clear();
 
-                    foreach (StarSystem starSystem in gameData.StarSystems)
-                        SystemComboBox.Items.Add(starSystem.Name);
+                        foreach (StarSystem starSystem in gameData.StarSystems)
+                            SystemComboBox.Items.Add(starSystem.Name);
 
-                    SystemComboBox.SelectedIndex = 0;
+                        SystemComboBox.SelectedIndex = 0;
 
-                    fileStream.Close();
+                        fileStream.Close();
+                    }
+
+                    {
+                        string path = Path.GetDirectoryName(openFileDialog.FileName);
+                        string filename = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                        string filepath = path+@"\"+filename+".pitcom";
+
+                        StreamReader fileStream = new StreamReader(filepath);
+                        XmlSerializer serializer = new XmlSerializer(typeof(GrabCommodityData));
+                        grabCommodityData = serializer.Deserialize(fileStream) as GrabCommodityData;
+                        fileStream.Close();
+                    }
+
+
+
                 }
 
             }
             catch
             {
-                TryOpenSaveFile_0004(openFileDialog);
+ //               TryOpenSaveFile_0004(openFileDialog);
             }
         }
-        private void TryOpenSaveFile_0004(OpenFileDialog openFileDialog)
-        {
-            try
-            {
-                Stream fileStream = openFileDialog.OpenFile();
-                XmlSerializer serializer = new XmlSerializer(typeof(List<StarSystem>));
-                List<StarSystem> starSystems = serializer.Deserialize(fileStream) as List<StarSystem>;
+        //private void TryOpenSaveFile_0004(OpenFileDialog openFileDialog)
+        //{
+        //    try
+        //    {
+        //        Stream fileStream = openFileDialog.OpenFile();
+        //        XmlSerializer serializer = new XmlSerializer(typeof(List<StarSystem>));
+        //        List<StarSystem> starSystems = serializer.Deserialize(fileStream) as List<StarSystem>;
 
-                if (starSystems == null || starSystems.Count == 0)
-                    throw new Exception();
+        //        if (starSystems == null || starSystems.Count == 0)
+        //            throw new Exception();
 
-                gameData = new GameData();
+        //        gameData = new GameData();
 
-                SystemComboBox.Items.Clear();
-                StationComboBox.Items.Clear();
+        //        SystemComboBox.Items.Clear();
+        //        StationComboBox.Items.Clear();
 
-                foreach (StarSystem starSystem in starSystems)
-                {
-                    SystemComboBox.Items.Add(starSystem.Name);
-                    gameData.StarSystems.Add(starSystem);
-                }
+        //        foreach (StarSystem starSystem in starSystems)
+        //        {
+        //            SystemComboBox.Items.Add(starSystem.Name);
+        //            gameData.StarSystems.Add(starSystem);
+        //        }
 
-                SystemComboBox.SelectedIndex = 0;
+        //        SystemComboBox.SelectedIndex = 0;
 
-                fileStream.Close();
-            }
-            catch
-            {
-                MessageBox.Show("The save file selected cannot be loaded. There are two possible reasons:\n\n1. It is corrupted\n2. It is from a version earlier than 0.5 and is not compatible.", "Error", MessageBoxButtons.OK);
-            }
-        }
+        //        fileStream.Close();
+        //    }
+        //    catch
+        //    {
+        //        MessageBox.Show("The save file selected cannot be loaded. There are two possible reasons:\n\n1. It is corrupted\n2. It is from a version earlier than 0.5 and is not compatible.", "Error", MessageBoxButtons.OK);
+        //    }
+        //}
 
         private void UpdateSelectedCommodity(DataGridViewRow commodity)
         {
@@ -570,7 +601,7 @@ namespace Pitsea
 
         private void GrabDataButton_Click(object sender, EventArgs e)
         {
-            GrabData gd = new GrabData();
+            GrabData gd = new GrabData(grabCommodityData);
             gd.Left = this.Left + 20;
             gd.Top = this.Top + 20; ;
             gd.SetStation(StationComboBox.Text);
@@ -590,6 +621,14 @@ namespace Pitsea
                     BindCommodities();
                 }
             }
+        }
+
+        private void FindCommodityButton_Click(object sender, EventArgs e)
+        {
+            FindCommodity fc = new FindCommodity(gameData, grabCommodityData);
+            fc.Left = this.Left + 20;
+            fc.Top = this.Top + 20; ;
+            fc.ShowDialog();
         }
     }
 

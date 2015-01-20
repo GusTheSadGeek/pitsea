@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
 using Tesseract;
 
 
@@ -21,10 +22,15 @@ namespace Pitsea
         private Market market = new Market();
         bool dataSubmitted = false;
         bool dataUpdate = false;
-        public GrabData()
+        private GrabCommodityData gcd;
+        private TesseractEngine engine; 
+        public GrabData(GrabCommodityData grabComData)
         {
+            gcd = grabComData;
             InitializeComponent();
-            init_commodities();
+            init_commodities(grabComData);
+            Environment.SetEnvironmentVariable("TESSDATA_PREFIX", null);
+            engine = new TesseractEngine(@"./tessdata", "gus", EngineMode.TesseractOnly);
         }
 
         public List<Commodity> GetData()
@@ -180,13 +186,15 @@ namespace Pitsea
             string text="";
             try
             {
-                using (var engine = new TesseractEngine(@"./tessdata", "gus", EngineMode.TesseractOnly))
+               // using (var engine = new TesseractEngine(@"./tessdata", "gus", EngineMode.TesseractOnly))
                 {
                     using (var img = bmp)
                     {
                         using (var page = engine.Process(img, PageSegMode.SingleBlock))
                         {
                             text = page.GetText();
+                            page.Image.Dispose();
+                            page.Dispose();
                         }
                     }
                 }
@@ -226,125 +234,170 @@ namespace Pitsea
 //            textBox1.Text = sb.ToString();
         }
 
-        private void commoditiesAdd(GrabCommodity com)
+        //private void commoditiesAdd(GrabCommodity com)
+        //{
+        //    GrabCommodityDatum datum = new GrabCommodityDatum();
+
+        //    if (com.Category)
+        //    {
+        //        datum.Category = com.Name;
+        //        datum.Names = null;
+        //    }
+        //    else
+        //    {
+        //        datum.Category = com.CategoryName;
+        //        datum.Names = com.Names;
+        //    }
+        //    gcd.CommodityList.Add(datum);
+
+        //    commodities.Add(com);
+        //    market.add_commoditity(com);
+        //}
+
+        //private void save_commodities(string path)
+        //{
+        //    using (StreamWriter sw = new StreamWriter(path))
+        //    {
+        //        foreach (GrabCommodity com in commodities)
+        //        {
+        //            sw.WriteLine(com.SaveString);
+        //        }
+        //    }
+        //}
+
+        //private void load_commodities(string path)
+        //{
+        //    using (StreamReader sr = new StreamReader(path))
+        //    {
+        //        while (!sr.EndOfStream)
+        //        {
+        //            string line = sr.ReadLine();
+        //            GrabCommodity com = new GrabCommodity(line, 2);
+        //            commoditiesAdd(com);
+        //        }
+        //    }
+        //}
+
+        private void init_commodities(GrabCommodityData gcd)
         {
-            commodities.Add(com);
-            market.add_commoditity(com);
-        }
+            foreach (GrabCommodityDatum datum in gcd.CommodityList)
+            {
+                GrabCommodity com = new GrabCommodity(datum);
+                commodities.Add(com);
+                market.add_commoditity(com);
+            }
 
-        private void init_commodities()
-        {
-            commoditiesAdd(new GrabCommodity("CHEMICALS",1));   // Categpry
-            commoditiesAdd(new GrabCommodity("EXPLOSIVES", "CHEMICALS"));
-            commoditiesAdd(new GrabCommodity("HYDROGEN FUEL", "CHEMICALS"));
-            commoditiesAdd(new GrabCommodity("MINERAL OIL", "CHEMICALS"));
-            commoditiesAdd(new GrabCommodity("CONSUMER ITEMS",1));   // Categpry
-            commoditiesAdd(new GrabCommodity("CLOTHING", "CONSUMER ITEMS"));
-            commoditiesAdd(new GrabCommodity("CONSUMER TECHNOLOGY", "CONSUMER ITEMS"));
-            commoditiesAdd(new GrabCommodity("DOMESTIC APPLIANCES", "CONSUMER ITEMS"));
+            //commoditiesAdd(new GrabCommodity("CHEMICALS",1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("EXPLOSIVES", "CHEMICALS"));
+            //commoditiesAdd(new GrabCommodity("HYDROGEN FUEL", "CHEMICALS"));
+            //commoditiesAdd(new GrabCommodity("MINERAL OIL", "CHEMICALS"));
+            //commoditiesAdd(new GrabCommodity("CONSUMER ITEMS",1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("CLOTHING", "CONSUMER ITEMS"));
+            //commoditiesAdd(new GrabCommodity("CONSUMER TECHNOLOGY", "CONSUMER ITEMS"));
+            //commoditiesAdd(new GrabCommodity("DOMESTIC APPLIANCES", "CONSUMER ITEMS"));
 
-            commoditiesAdd(new GrabCommodity("FOODS",1));   // Categpry
-            commoditiesAdd(new GrabCommodity("ANIMAL MEAT", "FOODS"));
-            commoditiesAdd(new GrabCommodity("ALGAE", "FOODS"));
-            commoditiesAdd(new GrabCommodity("ANIMAL MEAT", "FOODS"));
-            commoditiesAdd(new GrabCommodity("COFFEE", "FOODS"));
-            commoditiesAdd(new GrabCommodity("FISH", "FOODS"));
-            commoditiesAdd(new GrabCommodity("FOOD CARTRIDGES", "FOODS"));
-            commoditiesAdd(new GrabCommodity("FRUIT AND VEGETABLES", "FOODS"));
-            commoditiesAdd(new GrabCommodity("GRAIN", "FOODS"));
-            commoditiesAdd(new GrabCommodity("SYNTHETIC MEAT", "FOODS"));
-            commoditiesAdd(new GrabCommodity("TEA,IEA", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("FOODS",1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("ANIMAL MEAT", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("ALGAE", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("ANIMAL MEAT", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("COFFEE", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("FISH", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("FOOD CARTRIDGES", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("FRUIT AND VEGETABLES", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("GRAIN", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("SYNTHETIC MEAT", "FOODS"));
+            //commoditiesAdd(new GrabCommodity("TEA,IEA", "FOODS"));
 
-            commoditiesAdd(new GrabCommodity("INDUSTRIAL MATERIALS",1));   // Categpry
-            commoditiesAdd(new GrabCommodity("POLYMERS","INDUSTRIAL MATERIALS"));
-            commoditiesAdd(new GrabCommodity("SEMICONDUCTORS","INDUSTRIAL MATERIALS"));
-            commoditiesAdd(new GrabCommodity("SUPERCONDUCTORS","INDUSTRIAL MATERIALS"));
+            //commoditiesAdd(new GrabCommodity("INDUSTRIAL MATERIALS",1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("POLYMERS","INDUSTRIAL MATERIALS"));
+            //commoditiesAdd(new GrabCommodity("SEMICONDUCTORS","INDUSTRIAL MATERIALS"));
+            //commoditiesAdd(new GrabCommodity("SUPERCONDUCTORS","INDUSTRIAL MATERIALS"));
 
-            commoditiesAdd(new GrabCommodity("LEGAL DRUGS",1));   // Categpry
-            commoditiesAdd(new GrabCommodity("BEER,8EER","LEGAL DRUGS"));
-            commoditiesAdd(new GrabCommodity("LIQUOR","LEGAL DRUGS"));
-            commoditiesAdd(new GrabCommodity("TOBACCO","LEGAL DRUGS"));
-            commoditiesAdd(new GrabCommodity("WINE","LEGAL DRUGS"));
+            //commoditiesAdd(new GrabCommodity("LEGAL DRUGS",1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("BEER,8EER","LEGAL DRUGS"));
+            //commoditiesAdd(new GrabCommodity("LIQUOR","LEGAL DRUGS"));
+            //commoditiesAdd(new GrabCommodity("TOBACCO","LEGAL DRUGS"));
+            //commoditiesAdd(new GrabCommodity("WINE","LEGAL DRUGS"));
 
-            commoditiesAdd(new GrabCommodity("MACHINERY", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("ATMOSPHERIC PROCESSORS", "MACHINERY"));
-            commoditiesAdd(new GrabCommodity("CROP HARVESTER", "MACHINERY"));
-            commoditiesAdd(new GrabCommodity("MARINE EQUIPMENT", "MACHINERY"));
-            commoditiesAdd(new GrabCommodity("MICROBIAL FURNACES", "MACHINERY"));
-            commoditiesAdd(new GrabCommodity("MINERAL EXTRACTORS", "MACHINERY"));
-            commoditiesAdd(new GrabCommodity("POWER GENERATORS", "MACHINERY"));
-            commoditiesAdd(new GrabCommodity("WATER PURIFIERS", "MACHINERY"));
+            //commoditiesAdd(new GrabCommodity("MACHINERY", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("ATMOSPHERIC PROCESSORS", "MACHINERY"));
+            //commoditiesAdd(new GrabCommodity("CROP HARVESTER", "MACHINERY"));
+            //commoditiesAdd(new GrabCommodity("MARINE EQUIPMENT", "MACHINERY"));
+            //commoditiesAdd(new GrabCommodity("MICROBIAL FURNACES", "MACHINERY"));
+            //commoditiesAdd(new GrabCommodity("MINERAL EXTRACTORS", "MACHINERY"));
+            //commoditiesAdd(new GrabCommodity("POWER GENERATORS", "MACHINERY"));
+            //commoditiesAdd(new GrabCommodity("WATER PURIFIERS", "MACHINERY"));
 
-            commoditiesAdd(new GrabCommodity("MEDICINES", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("AGRI MEDICINDES", "MEDICINES"));
-            commoditiesAdd(new GrabCommodity("BASIC MEDICINES", "MEDICINES"));
-            commoditiesAdd(new GrabCommodity("PERFORMANCE ENHANCERS", "MEDICINES"));
-            commoditiesAdd(new GrabCommodity("PROGENITOR CELLS", "MEDICINES"));
+            //commoditiesAdd(new GrabCommodity("MEDICINES", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("AGRI MEDICINDES", "MEDICINES"));
+            //commoditiesAdd(new GrabCommodity("BASIC MEDICINES", "MEDICINES"));
+            //commoditiesAdd(new GrabCommodity("PERFORMANCE ENHANCERS", "MEDICINES"));
+            //commoditiesAdd(new GrabCommodity("PROGENITOR CELLS", "MEDICINES"));
 
-            commoditiesAdd(new GrabCommodity("METALS", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("ALUMINIUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("BERYLLIUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("COBALT", "METALS"));
-            commoditiesAdd(new GrabCommodity("COPPER", "METALS"));
-            commoditiesAdd(new GrabCommodity("GALLIUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("GOLD", "METALS"));
-            commoditiesAdd(new GrabCommodity("INDIUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("LITHIUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("PALLADIUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("PLATINUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("SILVER", "METALS"));
-            commoditiesAdd(new GrabCommodity("TANTALUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("TITANIUM", "METALS"));
-            commoditiesAdd(new GrabCommodity("URANIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("METALS", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("ALUMINIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("BERYLLIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("COBALT", "METALS"));
+            //commoditiesAdd(new GrabCommodity("COPPER", "METALS"));
+            //commoditiesAdd(new GrabCommodity("GALLIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("GOLD", "METALS"));
+            //commoditiesAdd(new GrabCommodity("INDIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("LITHIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("PALLADIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("PLATINUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("SILVER", "METALS"));
+            //commoditiesAdd(new GrabCommodity("TANTALUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("TITANIUM", "METALS"));
+            //commoditiesAdd(new GrabCommodity("URANIUM", "METALS"));
 
-            commoditiesAdd(new GrabCommodity("MINERALS", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("BAUXITE", "MINERALS"));
-            commoditiesAdd(new GrabCommodity("BERTRANDITE", "MINERALS"));
-            commoditiesAdd(new GrabCommodity("COLTAN", "MINERALS"));
-            commoditiesAdd(new GrabCommodity("GALLITE", "MINERALS"));
-            commoditiesAdd(new GrabCommodity("INDITE", "MINERALS"));
-            commoditiesAdd(new GrabCommodity("LEPIDOLITE", "MINERALS"));
-            commoditiesAdd(new GrabCommodity("RUTILE", "MINERALS"));
-            commoditiesAdd(new GrabCommodity("URANINITE", "MINERALS"));
-
-
-            commoditiesAdd(new GrabCommodity("TECHNOLOGY", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("ADVANCED CATALYSERS", "TECHNOLOGY"));
-            commoditiesAdd(new GrabCommodity("AUTOFABRICATORS", "TECHNOLOGY"));
-            commoditiesAdd(new GrabCommodity("BIOREDUCING LICHEN", "TECHNOLOGY"));
-            commoditiesAdd(new GrabCommodity("COMPUTER COMPONENTS", "TECHNOLOGY"));
-            commoditiesAdd(new GrabCommodity("HE SUITS", "TECHNOLOGY"));
-            commoditiesAdd(new GrabCommodity("RESONATING SEPARATROS", "TECHNOLOGY"));
-            commoditiesAdd(new GrabCommodity("ROBOTICS", "TECHNOLOGY"));
-
-            commoditiesAdd(new GrabCommodity("TEXTILES", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("LEATHER", "TEXTILES"));
-            commoditiesAdd(new GrabCommodity("NATURAL FABRICS", "TEXTILES"));
-            commoditiesAdd(new GrabCommodity("SYNTHETIC FABRICS", "TEXTILES"));
-
-            commoditiesAdd(new GrabCommodity("WASTE", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("BIOWASTE", "WASTE"));
-            commoditiesAdd(new GrabCommodity("CHEMICAL WASTE", "WASTE"));
-            commoditiesAdd(new GrabCommodity("SCRAP", "WASTE"));
+            //commoditiesAdd(new GrabCommodity("MINERALS", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("BAUXITE", "MINERALS"));
+            //commoditiesAdd(new GrabCommodity("BERTRANDITE", "MINERALS"));
+            //commoditiesAdd(new GrabCommodity("COLTAN", "MINERALS"));
+            //commoditiesAdd(new GrabCommodity("GALLITE", "MINERALS"));
+            //commoditiesAdd(new GrabCommodity("INDITE", "MINERALS"));
+            //commoditiesAdd(new GrabCommodity("LEPIDOLITE", "MINERALS"));
+            //commoditiesAdd(new GrabCommodity("RUTILE", "MINERALS"));
+            //commoditiesAdd(new GrabCommodity("URANINITE", "MINERALS"));
 
 
-            commoditiesAdd(new GrabCommodity("WEAPONS", 1));   // Categpry
-            commoditiesAdd(new GrabCommodity("NONLETHAL WEAPONS", "WEAPONS"));
-            commoditiesAdd(new GrabCommodity("REACTIVE ARMOUR","WEAPONS"));
+            //commoditiesAdd(new GrabCommodity("TECHNOLOGY", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("ADVANCED CATALYSERS", "TECHNOLOGY"));
+            //commoditiesAdd(new GrabCommodity("AUTOFABRICATORS", "TECHNOLOGY"));
+            //commoditiesAdd(new GrabCommodity("BIOREDUCING LICHEN", "TECHNOLOGY"));
+            //commoditiesAdd(new GrabCommodity("COMPUTER COMPONENTS", "TECHNOLOGY"));
+            //commoditiesAdd(new GrabCommodity("HE SUITS", "TECHNOLOGY"));
+            //commoditiesAdd(new GrabCommodity("RESONATING SEPARATROS", "TECHNOLOGY"));
+            //commoditiesAdd(new GrabCommodity("ROBOTICS", "TECHNOLOGY"));
+
+            //commoditiesAdd(new GrabCommodity("TEXTILES", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("LEATHER", "TEXTILES"));
+            //commoditiesAdd(new GrabCommodity("NATURAL FABRICS", "TEXTILES"));
+            //commoditiesAdd(new GrabCommodity("SYNTHETIC FABRICS", "TEXTILES"));
+
+            //commoditiesAdd(new GrabCommodity("WASTE", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("BIOWASTE", "WASTE"));
+            //commoditiesAdd(new GrabCommodity("CHEMICAL WASTE", "WASTE"));
+            //commoditiesAdd(new GrabCommodity("SCRAP", "WASTE"));
+
+
+            //commoditiesAdd(new GrabCommodity("WEAPONS", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("NONLETHAL WEAPONS", "WEAPONS"));
+            //commoditiesAdd(new GrabCommodity("REACTIVE ARMOUR","WEAPONS"));
 
 
 
 
-            commoditiesAdd(new GrabCommodity("UNCAT", 1));   // Categpry
+            //commoditiesAdd(new GrabCommodity("UNCAT", 1));   // Categpry
             
-            commoditiesAdd(new GrabCommodity("PESTICIDES"));
+            //commoditiesAdd(new GrabCommodity("PESTICIDES"));
             
 
-            commoditiesAdd(new GrabCommodity("ANIMAL MONITORS"));
-            commoditiesAdd(new GrabCommodity("AQUAPONIC SYSTEMS"));
-            commoditiesAdd(new GrabCommodity("LAND ENRICHMENT SYSYTEMS"));
+            //commoditiesAdd(new GrabCommodity("ANIMAL MONITORS"));
+            //commoditiesAdd(new GrabCommodity("AQUAPONIC SYSTEMS"));
+            //commoditiesAdd(new GrabCommodity("LAND ENRICHMENT SYSYTEMS"));
 
-
+            //save_commodities(@"d:\git\commodities.txt");
 
 
         }
@@ -560,6 +613,50 @@ namespace Pitsea
     }
 
 
+    public class GrabCommodityDatum
+    {
+        private string[] names;
+        private string category;
+
+        public string Category
+        {
+            get { return category; }
+            set { category = value; }
+        }
+
+        public string Name
+        {
+            get { 
+                if (names!=null) 
+                    return names[0];
+                else
+                    return null;
+            }
+        }
+
+        public string[] Names
+        {
+            get { return names; }
+            set { names = value; }
+        }
+
+        public string NiceName
+        {
+            get
+            {
+                if (Name == null) return null;
+                string[] names = Name.Split(' ');
+                StringBuilder sb = new StringBuilder();
+                foreach (string n in names)
+                {
+                    sb.Append(char.ToUpper(n[0]) + n.Substring(1).ToLower() + ' ');
+                }
+                return sb.ToString().Trim();
+            }
+        }
+    }
+
+
     public class GrabCommodity
     {
         private string[] names;
@@ -574,24 +671,62 @@ namespace Pitsea
         private int hcount;
         private int buyCount;
 
-        public GrabCommodity(string name)
+        public GrabCommodity(GrabCommodityDatum datum)
         {
-            names = name.Split(',');
-        }
-
-        public GrabCommodity(string name, int type)
-        {
-            if (type == 1)
+            category = datum.Category;
+            if (datum.Names == null)
             {
                 cat = true;
+                names = datum.Category.Split(',');
             }
-            names = name.Split(',');
+            else
+            {
+                cat = false;
+                names = datum.Names;
+            }
         }
-        public GrabCommodity(string name, string type)
-        {
-            category = type;
-            names = name.Split(',');
-        }
+
+
+        //public GrabCommodity(string name)
+        //{
+        //    names = name.Split(',');
+        //}
+
+        //// TODO del
+        //public GrabCommodity(string name, int type)
+        //{
+        //    if (type == 2)
+        //    {
+        //        InitFromSaveString(name);
+        //    }
+        //    else
+        //    {
+        //        if (type == 1)
+        //        {
+        //            cat = true;
+        //        }
+        //        names = name.Split(',');
+        //    }
+        //}
+
+        //private void initCatName(string name)
+        //{
+        //    cat = true;
+        //    category = "";
+        //    names = name.Split(',');
+        //}
+
+        //private void init(string name, string type)
+        //{
+        //    cat = false;
+        //    category = type;
+        //    names = name.Split(',');
+        //}
+
+        //public GrabCommodity(string name, string type)
+        //{
+        //    init(name, type);
+        //}
         public bool DataValid
         {
             get { return valid_data; }
@@ -611,6 +746,38 @@ namespace Pitsea
         {
             get { return names[0]; }
         }
+        public string[] Names
+        {
+            get { return names; }
+        }
+
+        //public string SaveString
+        //{
+        //    get {
+        //        if (cat)
+        //        {
+        //            return  names[0]+":-";
+        //        }
+        //        else
+        //        {
+        //            return CategoryName + ":" + string.Join(",", names);
+        //        }
+        //    }
+        //}
+
+        //public void InitFromSaveString(string s)
+        //{
+        //    string [] q = s.Split(':');
+        //    if (s[0] == '-')
+        //    {
+        //        names = q[0].Split(',');
+        //        cat = true;
+        //    }
+        //    else
+        //    {
+        //        init(q[0], q[1]);
+        //    }
+        //}
 
         public string Info
         {

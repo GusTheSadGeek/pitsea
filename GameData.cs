@@ -65,4 +65,21 @@ namespace Pitsea
             userRoutes = new List<Route>();
         }
     }
+
+    public class GrabCommodityData
+    {
+        private List<GrabCommodityDatum> commodityList;
+
+        public List<GrabCommodityDatum> CommodityList
+        {
+            get { return commodityList; }
+        //    set { CommodityList = value; }
+        }
+
+        public GrabCommodityData()
+        {
+            commodityList = new List<GrabCommodityDatum>();
+        }
+    }
+
 }

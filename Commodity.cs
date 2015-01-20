@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Pitsea
 {
@@ -18,7 +19,21 @@ namespace Pitsea
             get { return name; }
             set { name = value; }
         }
-        
+
+        public string NiceName
+        {
+            get
+            {
+                string[] names = Name.Split(' ');
+                StringBuilder sb = new StringBuilder();
+                foreach (string n in names)
+                {
+                    sb.Append(char.ToUpper(n[0]) + n.Substring(1).ToLower() + ' ');
+                }
+                return sb.ToString().Trim();
+            }
+        }
+
         public bool PriceCheckRequired
         {
             get { return priceCheckRequired; }
