@@ -11,7 +11,6 @@ namespace Pitsea
     public partial class Main : Form
     {
         private GameData gameData;
-        private GrabCommodityData grabCommodityData;
 
         private DataTable bindingTable;
 
@@ -24,7 +23,6 @@ namespace Pitsea
             this.Icon = new Icon("Graphics\\Pitsea.ico");
 
             gameData = new GameData();
-            grabCommodityData = new GrabCommodityData();
 
             SystemComboBox.Items.Clear();
             StationComboBox.Items.Clear();
@@ -350,18 +348,8 @@ namespace Pitsea
             {
                 {
                     Stream fileStream = saveFileDialog.OpenFile();
-                    XmlSerializer serializer = new XmlSerializer(typeof(GameData));
-                    serializer.Serialize(fileStream, gameData);
-                    fileStream.Close();
-                }
-
-                {
-                    string path = Path.GetDirectoryName(saveFileDialog.FileName);
-                    string filename = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
-                    string filepath = path + @"\" + filename + ".pitcom";
-                    StreamWriter fileStream = new StreamWriter(filepath);
-                    XmlSerializer serializer = new XmlSerializer(typeof(GrabCommodityData));
-                    serializer.Serialize(fileStream, grabCommodityData);
+                    XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+                    serializer.Serialize(fileStream, gameData.SaveGameData);
                     fileStream.Close();
                 }
             }
@@ -388,8 +376,8 @@ namespace Pitsea
                 {
                     {
                         Stream fileStream = openFileDialog.OpenFile();
-                        XmlSerializer serializer = new XmlSerializer(typeof(GameData));
-                        gameData = serializer.Deserialize(fileStream) as GameData;
+                        XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+                        gameData.SaveGameData = serializer.Deserialize(fileStream) as SaveGameData;
 
                         if (gameData == null)
                             throw new Exception();
@@ -404,20 +392,6 @@ namespace Pitsea
 
                         fileStream.Close();
                     }
-
-                    {
-                        string path = Path.GetDirectoryName(openFileDialog.FileName);
-                        string filename = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                        string filepath = path+@"\"+filename+".pitcom";
-
-                        StreamReader fileStream = new StreamReader(filepath);
-                        XmlSerializer serializer = new XmlSerializer(typeof(GrabCommodityData));
-                        grabCommodityData = serializer.Deserialize(fileStream) as GrabCommodityData;
-                        fileStream.Close();
-                    }
-
-
-
                 }
 
             }
@@ -426,37 +400,7 @@ namespace Pitsea
  //               TryOpenSaveFile_0004(openFileDialog);
             }
         }
-        //private void TryOpenSaveFile_0004(OpenFileDialog openFileDialog)
-        //{
-        //    try
-        //    {
-        //        Stream fileStream = openFileDialog.OpenFile();
-        //        XmlSerializer serializer = new XmlSerializer(typeof(List<StarSystem>));
-        //        List<StarSystem> starSystems = serializer.Deserialize(fileStream) as List<StarSystem>;
 
-        //        if (starSystems == null || starSystems.Count == 0)
-        //            throw new Exception();
-
-        //        gameData = new GameData();
-
-        //        SystemComboBox.Items.Clear();
-        //        StationComboBox.Items.Clear();
-
-        //        foreach (StarSystem starSystem in starSystems)
-        //        {
-        //            SystemComboBox.Items.Add(starSystem.Name);
-        //            gameData.StarSystems.Add(starSystem);
-        //        }
-
-        //        SystemComboBox.SelectedIndex = 0;
-
-        //        fileStream.Close();
-        //    }
-        //    catch
-        //    {
-        //        MessageBox.Show("The save file selected cannot be loaded. There are two possible reasons:\n\n1. It is corrupted\n2. It is from a version earlier than 0.5 and is not compatible.", "Error", MessageBoxButtons.OK);
-        //    }
-        //}
 
         private void UpdateSelectedCommodity(DataGridViewRow commodity)
         {
@@ -601,7 +545,7 @@ namespace Pitsea
 
         private void GrabDataButton_Click(object sender, EventArgs e)
         {
-            GrabData gd = new GrabData(grabCommodityData);
+            GrabData gd = new GrabData(gameData);
             gd.Left = this.Left + 20;
             gd.Top = this.Top + 20; ;
             gd.SetStation(StationComboBox.Text);
@@ -625,7 +569,7 @@ namespace Pitsea
 
         private void FindCommodityButton_Click(object sender, EventArgs e)
         {
-            FindCommodity fc = new FindCommodity(gameData, grabCommodityData);
+            FindCommodity fc = new FindCommodity(gameData, gameData);
             fc.Left = this.Left + 20;
             fc.Top = this.Top + 20; ;
             fc.ShowDialog();

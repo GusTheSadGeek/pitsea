@@ -22,9 +22,9 @@ namespace Pitsea
         private Market market = new Market();
         bool dataSubmitted = false;
         bool dataUpdate = false;
-        private GrabCommodityData gcd;
-        private TesseractEngine engine; 
-        public GrabData(GrabCommodityData grabComData)
+        private GameData gcd;
+        private TesseractEngine engine;
+        public GrabData(GameData grabComData)
         {
             gcd = grabComData;
             InitializeComponent();
@@ -278,7 +278,7 @@ namespace Pitsea
         //    }
         //}
 
-        private void init_commodities(GrabCommodityData gcd)
+        private void init_commodities(GameData gcd)
         {
             foreach (GrabCommodityDatum datum in gcd.CommodityList)
             {

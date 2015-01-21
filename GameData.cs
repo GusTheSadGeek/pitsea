@@ -7,9 +7,25 @@ namespace Pitsea
         View, Edit
     }
 
+
+    // ONLY THIS BIT GETS SAVED
+    public class SaveGameData
+    {
+        public List<StarSystem> starSystems;
+        public List<GrabCommodityDatum> commodityList;
+
+        public SaveGameData()
+        {
+            starSystems = new List<StarSystem>();
+            commodityList = new List<GrabCommodityDatum>();
+        }
+    }
+
+    
     public class GameData
     {
-        private List<StarSystem> starSystems;
+        private SaveGameData saveGameData;
+
         private List<Trade> trades;
         private List<Manifest> optimalManifests;
         private List<Manifest> userManifests;
@@ -19,9 +35,20 @@ namespace Pitsea
         private decimal capital;
         private decimal cargoSlots;
 
+        public SaveGameData SaveGameData
+        {
+            get { return saveGameData; }
+            set { saveGameData = value; }
+        }
+
+        public List<GrabCommodityDatum> CommodityList
+        {
+            get { return saveGameData.commodityList; }
+        }
+
         public List<StarSystem> StarSystems
         {
-            get { return starSystems; }
+            get { return saveGameData.starSystems; }
         }
         public List<Trade> Trades
         {
@@ -57,7 +84,8 @@ namespace Pitsea
 
         public GameData()
         {
-            starSystems = new List<StarSystem>();
+            saveGameData = new SaveGameData();
+
             trades = new List<Trade>();
             optimalManifests = new List<Manifest>();
             userManifests = new List<Manifest>();
@@ -65,21 +93,4 @@ namespace Pitsea
             userRoutes = new List<Route>();
         }
     }
-
-    public class GrabCommodityData
-    {
-        private List<GrabCommodityDatum> commodityList;
-
-        public List<GrabCommodityDatum> CommodityList
-        {
-            get { return commodityList; }
-        //    set { CommodityList = value; }
-        }
-
-        public GrabCommodityData()
-        {
-            commodityList = new List<GrabCommodityDatum>();
-        }
-    }
-
 }

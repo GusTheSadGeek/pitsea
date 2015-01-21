@@ -13,10 +13,10 @@ namespace Pitsea
     public partial class FindCommodity : Form
     {
         GameData gameData;
-        GrabCommodityData grabCommodityData;
+        GameData grabCommodityData;
         private DataTable bindingTable;
 
-        public FindCommodity(GameData gd, GrabCommodityData gcd)
+        public FindCommodity(GameData gd, GameData gcd)
         {
             InitializeComponent();
             gameData = gd;
