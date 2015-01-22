@@ -574,6 +574,10 @@ namespace Pitsea
             fc.Top = this.Top + 20; ;
             fc.ShowDialog();
         }
+
+        private void Main_Deactivate(object sender, EventArgs e)
+        {
+        }
     }
 
 

@@ -51,8 +51,8 @@
             this.exitWithSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAndExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GrabDataButton = new System.Windows.Forms.Button();
-            this.GoodsTable = new Pitsea.CustomDataGridView();
             this.FindCommodityButton = new System.Windows.Forms.Button();
+            this.GoodsTable = new Pitsea.CustomDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.CargoSlotsNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CapitalNumericUpDown)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -266,6 +266,16 @@
             this.GrabDataButton.UseVisualStyleBackColor = true;
             this.GrabDataButton.Click += new System.EventHandler(this.GrabDataButton_Click);
             // 
+            // FindCommodityButton
+            // 
+            this.FindCommodityButton.Location = new System.Drawing.Point(584, 79);
+            this.FindCommodityButton.Name = "FindCommodityButton";
+            this.FindCommodityButton.Size = new System.Drawing.Size(121, 23);
+            this.FindCommodityButton.TabIndex = 31;
+            this.FindCommodityButton.Text = "Find Commodity";
+            this.FindCommodityButton.UseVisualStyleBackColor = true;
+            this.FindCommodityButton.Click += new System.EventHandler(this.FindCommodityButton_Click);
+            // 
             // GoodsTable
             // 
             this.GoodsTable.AllowUserToAddRows = false;
@@ -281,16 +291,6 @@
             this.GoodsTable.TabStop = false;
             this.GoodsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellContentClick);
             this.GoodsTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellEndEdit);
-            // 
-            // FindCommodityButton
-            // 
-            this.FindCommodityButton.Location = new System.Drawing.Point(584, 79);
-            this.FindCommodityButton.Name = "FindCommodityButton";
-            this.FindCommodityButton.Size = new System.Drawing.Size(121, 23);
-            this.FindCommodityButton.TabIndex = 31;
-            this.FindCommodityButton.Text = "Find Commodity";
-            this.FindCommodityButton.UseVisualStyleBackColor = true;
-            this.FindCommodityButton.Click += new System.EventHandler(this.FindCommodityButton_Click);
             // 
             // Main
             // 
@@ -322,6 +322,7 @@
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Pitsea";
+            this.Deactivate += new System.EventHandler(this.Main_Deactivate);
             ((System.ComponentModel.ISupportInitialize)(this.CargoSlotsNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CapitalNumericUpDown)).EndInit();
             this.menuStrip1.ResumeLayout(false);

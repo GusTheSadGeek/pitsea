@@ -76,6 +76,7 @@ namespace Pitsea
             button1.Text = "GO !!";
             button1.Update();
             long ticks = timestamp_ms() + 20000;
+            int n = 0;
             while (ticks > timestamp_ms())
             {
                 scan_and_process();
@@ -83,9 +84,16 @@ namespace Pitsea
                 textBox1.Update();
                 InfoBox.Text = ((ticks - timestamp_ms()) / 1000).ToString();
                 InfoBox.Update();
+                this.Update();
 //                int pauseTime = (int)(ticks - timestamp_ms());
 //                if (pauseTime > 0)
 //                    Thread.Sleep(pauseTime);
+                Thread.Sleep(10);
+                if (++n > 10)
+                {
+                    Application.DoEvents();
+                    n = 0;
+                }
             }
             textBox1.Text += "\r\nX";
             button1.Text = "START";
