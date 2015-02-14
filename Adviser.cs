@@ -1,30 +1,117 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+
+using System;
+
+
 namespace Pitsea
 {
     public static class Adviser
     {
+        private static List<StarSystem> ss;
+
         static Adviser()
         {
         }
 
-        public static void CalculateAll(GameData gameData)
+        public static void CalculateAll(GameData gameData, StarSystem homeSystem)
         {
+            UpdateDistance(gameData, homeSystem);
+
+//            ss = gameData.StarSystems.FindAll(s => s.Stations.Count > 0);
+            ss = gameData.StarSystems.FindAll(s => s.NearbyStars().Count > 0);
             CalculateAllTrades(gameData);
             CalculateOptimalManifests(gameData);
+
+//            ss = gameData.StarSystems.FindAll(s => s.NearbyStars().Count > 0);
             CalculateOptimalRoutes(gameData);
+        }
+
+        private static void UpdateDistance(GameData gameData, StarSystem homeSystem)
+        {
+            int jump = 0;
+            foreach (StarSystem ss in gameData.SaveGameData.starSystems)
+            {
+                ss.NearbyStars().Clear();
+                ss.Jumps(99999);
+            }
+            homeSystem.Jumps(0);
+
+            List<StarSystem> neighbours = new List<StarSystem>();
+            findNeighbours(gameData, homeSystem, neighbours);
+            while (jump < 10)
+            {
+                ++jump;
+                foreach (StarSystem ss in neighbours)
+                {
+                    Console.WriteLine(ss.Name + " ## " + jump.ToString());
+                    ss.Jumps(jump);
+                }
+                List<StarSystem> neighbours2 = new List<StarSystem>();
+                foreach (StarSystem ss in neighbours)
+                {
+                    findNeighbours(gameData, ss, neighbours2);
+                }
+                Console.WriteLine(neighbours2.Count);
+
+                neighbours = neighbours2;
+            }
+
+//            List<StarSystem> neighbours = new List<StarSystem>();
+//            if (jump < 10)
+//            {
+//                foreach (StarSystem ss2 in gameData.SaveGameData.starSystems)
+//                {
+//                    if (homeSystem.isNearby(ss2, (double)(gameData.JumpDist)))
+//                    {
+//                        Console.WriteLine(homeSystem.Name+" : "+ss2.Name + "  " + jump.ToString());
+////                        UpdateDistance(gameData, ss2, jump + 1);
+//                        neighbours.Add(ss2);
+//                        if ( ss2.Jumps() > (jump + 1))
+//                        {
+//                            ss2.Jumps(jump + 1);
+//                        }
+//                    }
+//                }
+//            }
+//            foreach (StarSystem ss3 in neighbours)
+//            {
+//                UpdateDistance(gameData, ss3, jump + 1);
+//            }
+        }
+
+        private static List<StarSystem> findNeighbours(GameData gameData, StarSystem homeSystem, List<StarSystem> neighbours)
+        {
+            foreach (StarSystem ss in gameData.SaveGameData.starSystems)
+            {
+                if (homeSystem.isNearby(ss, (double)(gameData.JumpDist)))
+                {
+                    if (ss.Jumps() > 1000)
+                    {
+                        if (neighbours.Find(x => x.Id == ss.Id) == null)
+                        {
+                            neighbours.Add(ss);
+                        }
+                        else
+                        {
+                            Console.WriteLine(ss.Name + " @@ ");
+                        }
+                    }
+                }
+            }
+            return neighbours;
         }
 
         private static void CalculateAllTrades(GameData gameData)
         {
             gameData.Trades.Clear();
 
-            for (int x = 0; x < gameData.StarSystems.Count - 1; x++)
-                for (int y = x + 1; y < gameData.StarSystems.Count; y++)
+            for (int x = 0; x < ss.Count - 1; x++)
+                for (int y = x + 1; y < ss.Count; y++)
                 {
-                    StarSystem system1 = gameData.StarSystems[x];
-                    StarSystem system2 = gameData.StarSystems[y];
+                    StarSystem system1 = ss[x];
+                    StarSystem system2 = ss[y];
 
                     foreach (Station station1 in system1.Stations)
                         foreach (Station station2 in system2.Stations)
@@ -111,13 +198,16 @@ namespace Pitsea
         {
             gameData.OptimalRoutes.Clear();
 
-            foreach (StarSystem startSystem in gameData.StarSystems)
+            List<StarSystem> ss2 = ss.FindAll(x => x.Id >= 0);
+            foreach (StarSystem startSystem in ss)
+            {
+                ss2.Remove(startSystem);
                 foreach (Station startStation in startSystem.Stations)
                 {
                     Route candidateRoute = null;
 
                     //Find best first out and return pair.
-                    foreach (StarSystem endSystem in gameData.StarSystems)
+                    foreach (StarSystem endSystem in ss2)
                         foreach (Station endStation in endSystem.Stations)
                         {
                             if (startSystem.Equals(endSystem) || startStation.Equals(endStation))
@@ -155,7 +245,7 @@ namespace Pitsea
                             Manifest candidateStart = null;
                             Manifest candidateReturn = null;
 
-                            foreach (StarSystem newSystem in gameData.StarSystems)
+                            foreach (StarSystem newSystem in ss)
                                 foreach (Station newStation in newSystem.Stations)
                                 {
                                     bool isUsed = false;
@@ -201,6 +291,7 @@ namespace Pitsea
                             gameData.OptimalRoutes.Add(candidateRoute);
                     }
                 }
+            }
         }
 
         private static Manifest FindManifest(GameData gameData, StarSystem startSystem, Station startStation, StarSystem endSystem, Station endStation)

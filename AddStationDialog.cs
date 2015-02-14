@@ -31,6 +31,9 @@ namespace Pitsea
 
             result = new Station();
             result.Name = StationTextBox.Text;
+            long distance;
+            long.TryParse(distanceBox.Text, out distance);
+            result.DistanceToStar = distance;
             this.Close();
         }
     }

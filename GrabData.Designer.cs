@@ -43,6 +43,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.SubmitButton = new System.Windows.Forms.Button();
             this.UpdateButton = new System.Windows.Forms.Button();
+            this.ConfigButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -136,11 +137,22 @@
             this.UpdateButton.UseVisualStyleBackColor = true;
             this.UpdateButton.Click += new System.EventHandler(this.UpdateButton_Click);
             // 
+            // ConfigButton
+            // 
+            this.ConfigButton.Location = new System.Drawing.Point(81, 27);
+            this.ConfigButton.Name = "ConfigButton";
+            this.ConfigButton.Size = new System.Drawing.Size(75, 23);
+            this.ConfigButton.TabIndex = 10;
+            this.ConfigButton.Text = "Config";
+            this.ConfigButton.UseVisualStyleBackColor = true;
+            this.ConfigButton.Click += new System.EventHandler(this.ConfigButton_Click);
+            // 
             // GrabData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(818, 803);
+            this.Controls.Add(this.ConfigButton);
             this.Controls.Add(this.UpdateButton);
             this.Controls.Add(this.SubmitButton);
             this.Controls.Add(this.label2);
@@ -172,6 +184,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button SubmitButton;
         private System.Windows.Forms.Button UpdateButton;
+        private System.Windows.Forms.Button ConfigButton;
     }
 }
 

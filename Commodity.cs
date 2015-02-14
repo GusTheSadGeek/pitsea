@@ -3,16 +3,60 @@ using System.Text;
 
 namespace Pitsea
 {
+    public class CommodityCategory
+    {
+        public Int32  id;
+        public String name;
+        public String scanName;
+    }
+
+    public class CommodityType
+    {
+        public Int32 id;
+        public String name;
+        public Int32 category_id;
+        public Int64 average_price;
+        private CommodityCategory category;
+        public String [] scanNames;
+
+        public String CatName()
+        {
+            if (category == null)
+            {
+                category = GameData.Instance.CommodityCategories.Find(c => c.id == category_id);
+            }
+            return category.name; 
+        }
+
+        public void SetCategory(CommodityCategory c)
+        {
+            category = c;
+        }
+    }
+
+
 
     public class Commodity
     {
         private string name;
-        private string cat;
+//        private string cat;
         private decimal buyPrice;
         private decimal sellPrice;
         private decimal supply;
         private DateTime lastUpdated;
         private bool priceCheckRequired;
+        public  Int64 id=-1;
+        private CommodityType type;
+
+        public Int64 GetId()
+        {
+            return id;
+        }
+        public void SetId(Int64 x)
+        {
+            id=x;
+            type = GameData.Instance.CommodityTypes.Find(c => c.id == id);    
+        }
 
         public string Name
         {
@@ -42,8 +86,15 @@ namespace Pitsea
 
         public string Cat
         {
-            get { return cat; }
-            set { cat = value; }
+            get
+            {
+                if (type == null)
+                {
+                    type = GameData.Instance.CommodityTypes.Find(c => c.id == id);
+                }
+                return type.CatName();
+            }
+            set {  }
         }
         public decimal BuyPrice
         {
@@ -73,7 +124,7 @@ namespace Pitsea
         public Commodity(Commodity copy)
         {
             name = copy.Name;
-            cat = copy.Cat;
+            //cat = copy.Cat;
             buyPrice = copy.BuyPrice;
             sellPrice = copy.SellPrice;
             supply = copy.supply;

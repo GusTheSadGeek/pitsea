@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -14,10 +15,48 @@ namespace Pitsea
 
         private DataTable bindingTable;
 
+        private static Form _instance;
+        public static Form Instance
+        {
+            get { return _instance; }
+        }
+
         public Main()
         {
-            this.Left = Screen.PrimaryScreen.Bounds.Width + 20;
-            this.Top = 20;
+            _instance = this;
+
+            object left = ReadReg("MainLeft");
+            object top = ReadReg("MainTop");
+
+            if ( (left != null) && (top != null) )
+            {
+                this.Left = (int)left;
+                this.Top = (int)top;
+            }
+            else
+            {
+                var Z = Screen.AllScreens;
+                if (Z.Length == 1)
+                {
+                    // 1 screen only - not really ideal !!
+                    this.Left = 20;
+                    this.Top = 20;
+                }
+                else
+                {
+                    foreach(var screen in Z)
+                    {
+                        if (!screen.Primary)
+                        {
+                            //default to a secondary screen
+                            this.Left = screen.Bounds.X + 20;
+                            this.Top = screen.Bounds.Y + 20;
+                            break;
+                        }
+                    }
+                }
+            }
+
 
             InitializeComponent();
             this.Icon = new Icon("Graphics\\Pitsea.ico");
@@ -47,41 +86,70 @@ namespace Pitsea
             if (gameData.StarSystems.Count == 0)
                 return;
 
-            int selectedIndex = SystemComboBox.SelectedIndex;
+            StarSystem system = SystemComboBox.SelectedItem as StarSystem;
+            gameData.StarSystems.Remove(system);
 
-            SystemComboBox.Items.RemoveAt(selectedIndex);
-            gameData.StarSystems.RemoveAt(selectedIndex);
+            RefreshSystemComboBox();
+////        SystemComboBox.Items.Remove(system);
 
-            if (gameData.StarSystems.Count > 0)
-                SystemComboBox.SelectedIndex = Math.Min(selectedIndex, Math.Max(gameData.StarSystems.Count - 1, 0));
-            else
-            {
-                SystemComboBox.Text = string.Empty;
-                StationComboBox.Items.Clear();
-                StationComboBox.Text = string.Empty;
-                BindCommodities();
-            }
+//            if (gameData.StarSystems.Count > 0)
+//                SystemComboBox.SelectedIndex = 0;
+//            else
+//            {
+//                SystemComboBox.Text = string.Empty;
+//                StationComboBox.Items.Clear();
+//                StationComboBox.Text = string.Empty;
+//                BindCommodities();
+//            }
         }
+        private bool updatingSystemComboBox = false;
         private void SystemComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (SystemComboBox.SelectedIndex < 0)
                 return;
+            if (updatingSystemComboBox)
+                return;
 
-            StarSystem selectedSystem = gameData.StarSystems[SystemComboBox.SelectedIndex];
-
-            StationComboBox.Items.Clear();
-
-            foreach (Station station in selectedSystem.Stations)
-                StationComboBox.Items.Add(station.Name);
-
-            if (StationComboBox.Items.Count > 0)
-                StationComboBox.SelectedIndex = 0;
-            else
+            try
             {
-                StationComboBox.Text = string.Empty;
-                BindCommodities();
+//                updatingSystemComboBox = true;
+
+                StarSystem selectedSystem = SystemComboBox.SelectedItem as StarSystem;
+                if (gameData.CurrentSystemId != selectedSystem.Id)
+                {
+                    gameData.CurrentSystemId = selectedSystem.Id;
+                    RefreshSystemComboBox();
+                }
+
+                StationComboBox.DataSource = selectedSystem.Stations;
+                StationComboBox.DisplayMember = "Name";
+                StationComboBox.ValueMember = "Name";
+
+                if (StationComboBox.Items.Count > 0)
+                {
+                    StationComboBox.SelectedIndex = 0;
+                    int i = 0;
+                    foreach (Station s in selectedSystem.Stations)
+                    {
+                        if (s.Id == gameData.CurrentStationId)
+                        {
+                            StationComboBox.SelectedIndex = i;
+                            break;
+                        }
+                        ++i;
+                    }
+                }
+                else
+                {
+                    StationComboBox.Text = string.Empty;
+                    BindCommodities();
+                }
+                GrabDataButton.Enabled = (StationComboBox.SelectedIndex >= 0);
             }
-            GrabDataButton.Enabled = (StationComboBox.SelectedIndex >= 0);
+            finally
+            {
+//                updatingSystemComboBox = false;
+            }
         }
 
         private void AddStationButton_Click(object sender, EventArgs e)
@@ -89,7 +157,7 @@ namespace Pitsea
             if (SystemComboBox.Items.Count == 0)
                 return;
 
-            AddStationDialog dialog = new AddStationDialog(gameData.StarSystems[SystemComboBox.SelectedIndex].Name);
+            AddStationDialog dialog = new AddStationDialog((SystemComboBox.SelectedItem as StarSystem).Name);
             dialog.ShowDialog();
 
             if (dialog.Result == null)
@@ -102,17 +170,24 @@ namespace Pitsea
         }
         private void RemoveStationButton_Click(object sender, EventArgs e)
         {
-            if (gameData.StarSystems.Count == 0 || gameData.StarSystems[SystemComboBox.SelectedIndex].Stations.Count == 0)
+
+            Station selectedStation = StationComboBox.SelectedItem as Station;
+            StarSystem selectedSystem = SystemComboBox.SelectedItem as StarSystem;
+
+            if ((selectedStation == null) || (selectedSystem == null))
+            {
                 return;
+            }
 
-            int selectedStationIndex = StationComboBox.SelectedIndex;
-            StarSystem selectedSystem = gameData.StarSystems[SystemComboBox.SelectedIndex];
+            selectedSystem.Stations.Remove(selectedStation);
 
-            StationComboBox.Items.RemoveAt(selectedStationIndex);
-            selectedSystem.Stations.RemoveAt(selectedStationIndex);
+            // Force redraw of station
+            int i = SystemComboBox.SelectedIndex;
+            SystemComboBox.SelectedIndex = i + 1;
+            SystemComboBox.SelectedIndex = i;
 
             if (selectedSystem.Stations.Count > 0)
-                StationComboBox.SelectedIndex = Math.Min(selectedStationIndex, Math.Max(selectedSystem.Stations.Count - 1, 0));
+                StationComboBox.SelectedIndex = 0;
             else
             {
                 StationComboBox.Text = string.Empty;
@@ -122,6 +197,8 @@ namespace Pitsea
         private void StationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             BindCommodities();
+            Station selectedStation = StationComboBox.SelectedItem as Station;
+            distanceBox.Text = selectedStation.DistanceToStar.ToString();
             GrabDataButton.Enabled = (SystemComboBox.SelectedIndex >= 0);
         }
 
@@ -132,7 +209,7 @@ namespace Pitsea
 
 //            bindingTable.coRowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing
 
-            bindingTable.Columns.Add("Index");
+            bindingTable.Columns.Add("Id");
             bindingTable.Columns.Add("Category");
             bindingTable.Columns.Add("Commodity");
             bindingTable.Columns.Add("SellPrice");
@@ -141,7 +218,7 @@ namespace Pitsea
             bindingTable.Columns.Add("LastUpdated");
             bindingTable.Columns.Add("PC");
 
-            bindingTable.Columns["Index"].DataType = System.Type.GetType("System.Decimal");
+            bindingTable.Columns["Id"].DataType = System.Type.GetType("System.Decimal");
             bindingTable.Columns["BuyPrice"].DataType = System.Type.GetType("System.Decimal");
             bindingTable.Columns["SellPrice"].DataType = System.Type.GetType("System.Decimal");
             bindingTable.Columns["Supply"].DataType = System.Type.GetType("System.Decimal");
@@ -151,27 +228,22 @@ namespace Pitsea
 
             GoodsTable.Columns.Clear();
 
-            if (SystemComboBox.SelectedIndex < 0 || gameData.StarSystems.Count == 0)
+            Station selectedStation = StationComboBox.SelectedItem as Station;
+
+            if (selectedStation == null)
                 return;
-
-            StarSystem selectedSystem = gameData.StarSystems[SystemComboBox.SelectedIndex];
-
-            if (StationComboBox.SelectedIndex < 0 || selectedSystem.Stations.Count == 0)
-                return;
-
-            Station selectedStation = selectedSystem.Stations[StationComboBox.SelectedIndex];
 
             int index = 0;
 
 
 
 
-            foreach (Commodity commodity in selectedStation.Commodities)
+            foreach (Commodity commodity in selectedStation.CommoditiesSorted())
             {
                 DataRow newRow = bindingTable.NewRow();
-                newRow["Index"] = index;
+                newRow["Id"] = commodity.id;
                 newRow["Category"] = commodity.Cat;
-                newRow["Commodity"] = commodity.Name;
+                newRow["Commodity"] = commodity.NiceName;
                 newRow["SellPrice"] = commodity.SellPrice;
                 newRow["BuyPrice"] = commodity.BuyPrice;
                 newRow["Supply"] = commodity.Supply;
@@ -183,7 +255,7 @@ namespace Pitsea
 
             GoodsTable.DataSource = bindingTable;
 
-            GoodsTable.Columns["Index"].Visible = false;
+            GoodsTable.Columns["Id"].Visible = false;
             GoodsTable.Columns["PC"].Visible = false;
 
             DataGridViewButtonColumn deleteColumn = new DataGridViewButtonColumn();
@@ -232,7 +304,7 @@ namespace Pitsea
                 }
                 else
                 {
-                    string v = row.Cells[2].Value.ToString();
+                    string v = row.Cells[2].Value.ToString().ToUpper();
                     switch (v)
                     {
                         case "CHEMICALS":
@@ -244,7 +316,13 @@ namespace Pitsea
                         case "FOODS":
                             c = Color.DarkSalmon;
                             break;
+                        case "INDUSTRIAL MATERIALS":
+                            c = Color.Cornsilk;
+                            break;
                         case "LEGAL DRUGS":
+                            c = Color.Aquamarine;
+                            break;
+                        case "DRUGS":
                             c = Color.Aquamarine;
                             break;
                         case "MACHINERY":
@@ -316,6 +394,7 @@ namespace Pitsea
         {
             gameData.Capital = CapitalNumericUpDown.Value;
             gameData.CargoSlots = CargoSlotsNumericUpDown.Value;
+            gameData.JumpDist = JumpUpDown.Value;
 
             if (gameData.Capital <= 0 || gameData.CargoSlots <= 0)
             {
@@ -323,7 +402,10 @@ namespace Pitsea
                 return;
             }
 
-            Adviser.CalculateAll(gameData);
+            string homeSystemName = SystemComboBox.SelectedItem.ToString();
+            StarSystem homeSystem = SystemComboBox.SelectedItem as StarSystem;
+
+            Adviser.CalculateAll(gameData, homeSystem);
 
             if (gameData.Trades.Count > 0)
             {
@@ -336,6 +418,7 @@ namespace Pitsea
 
         private void SaveData()
         {
+
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".pitdata";
@@ -346,13 +429,62 @@ namespace Pitsea
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                {
-                    Stream fileStream = saveFileDialog.OpenFile();
-                    XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
-                    serializer.Serialize(fileStream, gameData.SaveGameData);
-                    fileStream.Close();
-                }
+                SaveData(saveFileDialog.FileName);
             }
+            WriteReg("lastsavepath", saveFileDialog.FileName);
+        }
+
+        private void AutoSave()
+        {
+            string lastSavePath = ReadReg("lastsavepath") as string;
+            if (lastSavePath != null)
+            {
+                InfoBoxA ib = new InfoBoxA();
+                ib.Show();
+                ib.Message("Autosaving.......");
+                string path = Path.GetDirectoryName(lastSavePath);
+                SaveData(path + @"\autosave.pitdata");
+                ib.Close();
+            }
+
+            WriteReg("MainLeft", this.Left);
+            WriteReg("MainTop", this.Top);
+        }
+
+        private void AutoLoad()
+        {
+            string lastSavePath = ReadReg("lastsavepath") as string;
+            if (lastSavePath != null)
+            {
+                InfoBoxA ib = new InfoBoxA();
+                ib.Show();
+                ib.Message("Autoloading.......");
+                string path = Path.GetDirectoryName(lastSavePath);
+                TryLoadFile(path + @"\autosave.pitdata");
+                ib.Close();
+            }
+        }
+        
+        private void SaveData(string filepath)
+        {
+            try
+            {
+                gameData.Capital = CapitalNumericUpDown.Value;
+                gameData.CargoSlots = CargoSlotsNumericUpDown.Value;
+                gameData.JumpDist = JumpUpDown.Value;
+                gameData.CurrentStationId = (StationComboBox.SelectedItem as Station).Id;
+                gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id;
+
+                StreamWriter fileStream = new StreamWriter(filepath);
+                XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+                serializer.Serialize(fileStream, gameData.SaveGameData);
+                fileStream.Close();
+            }
+            catch (Exception e)
+            {
+                var a = e;
+            }
+
         }
 
         private void LoadData()
@@ -370,85 +502,162 @@ namespace Pitsea
 
         private void TryOpenSaveFile_Current(OpenFileDialog openFileDialog)
         {
-            try
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    {
-                        Stream fileStream = openFileDialog.OpenFile();
-                        XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
-                        gameData.SaveGameData = serializer.Deserialize(fileStream) as SaveGameData;
-
-                        if (gameData == null)
-                            throw new Exception();
-
-                        SystemComboBox.Items.Clear();
-                        StationComboBox.Items.Clear();
-
-                        foreach (StarSystem starSystem in gameData.StarSystems)
-                            SystemComboBox.Items.Add(starSystem.Name);
-
-                        SystemComboBox.SelectedIndex = 0;
-
-                        fileStream.Close();
-                    }
-                }
-
-            }
-            catch
-            {
- //               TryOpenSaveFile_0004(openFileDialog);
+                TryLoadFile(openFileDialog.FileName);
             }
         }
 
+        private void TryLoadFile(String filepath)
+        {
+            try
+            {
+                {
+
+
+                    StreamReader fileStream = new StreamReader(filepath);
+                    XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+                    gameData = new GameData();
+                    gameData.SaveGameData = serializer.Deserialize(fileStream) as SaveGameData;
+                    fileStream.Close();
+
+                    if (gameData == null)
+                        throw new Exception();
+
+                    RefreshSystemComboBox();
+
+//                    SystemComboBox.DataSource = null;
+////                    StationComboBox.DataSource = null;
+//                    SystemComboBox.Items.Clear();
+////                    StationComboBox.Items.Clear();
+
+//                    SystemComboBox.DataSource = gameData.StarSystems.FindAll(x => x.Stations.Count > 0);
+
+//                    SystemComboBox.DisplayMember = "Name";
+//                    SystemComboBox.ValueMember = "Name";
+
+//                    SystemComboBox.SelectedIndex = 0;
+//                    int i = 0;
+//                    foreach(StarSystem s in (SystemComboBox.DataSource as List<StarSystem>))
+//                    {
+//                        if (s.Id == gameData.CurrentSystemId)
+//                        {
+//                            SystemComboBox.SelectedIndex = i;
+//                            break;
+//                        }
+//                        ++i;
+//                    }
+
+                    CapitalNumericUpDown.Value = gameData.Capital;
+                    CargoSlotsNumericUpDown.Value = gameData.CargoSlots;
+                    JumpUpDown.Value = gameData.JumpDist;
+                }
+            }
+            catch(Exception e)
+            {
+                var a = e;
+                InfoBoxA ib = new InfoBoxA();
+                ib.Message(e.ToString());
+                ib.ShowDialog();
+                ib.Close();
+                //               TryOpenSaveFile_0004(openFileDialog);
+            }
+        }
+
+        private void RefreshSystemComboBox()
+        {
+            if (updatingSystemComboBox) return;
+            try
+            {
+                SystemComboBox.SuspendLayout();
+                StarSystem selectedSystem = SystemComboBox.SelectedItem as StarSystem; 
+                updatingSystemComboBox = true;
+                SystemComboBox.DataSource = null;
+                SystemComboBox.Items.Clear();
+                SystemComboBox.DisplayMember = "Name";
+                SystemComboBox.ValueMember = "Name";
+                int i = 0;
+
+                bool allSystems = (allSystemsCheckBox.CheckState == CheckState.Checked);
+                bool localSystems = (localSystemCheckBox.CheckState == CheckState.Checked);
+
+                List<StarSystem> newDataSource;
+                if (allSystems)
+                {
+                    newDataSource = gameData.StarSystems;
+                }
+                else
+                {
+                    if ((selectedSystem != null) && (localSystems))
+                    {
+                        newDataSource = gameData.StarSystems.FindAll(x => x.isWithinRange(selectedSystem, 30) && (x.Stations.Count > 0));
+                    }
+                    else
+                    {
+                        newDataSource = gameData.StarSystems.FindAll(x => x.Stations.Count > 0);
+                    }
+                }
+
+                newDataSource.Sort(delegate(StarSystem c1, StarSystem c2) { return c1.Name.CompareTo(c2.Name); });
+
+
+                SystemComboBox.DataSource = newDataSource;
+
+                SystemComboBox.SelectedIndex = 0;
+
+                foreach (StarSystem s in (SystemComboBox.DataSource as List<StarSystem>))
+                {
+                    if (s.Id == gameData.CurrentSystemId)
+                    {
+                        SystemComboBox.SelectedIndex = i;
+                        break;
+                    }
+                    ++i;
+                }
+                SystemComboBox_SelectedIndexChanged(this, EventArgs.Empty);
+            }
+            finally
+            {
+                updatingSystemComboBox = false;
+                SystemComboBox.ResumeLayout();
+
+            }
+        }
 
         private void UpdateSelectedCommodity(DataGridViewRow commodity)
         {
-            if (gameData.StarSystems.Count == 0 || SystemComboBox.SelectedIndex < 0)
+            Station selectedStation = StationComboBox.SelectedItem as Station;
+
+            int editedCommodityId = -1;
+            int.TryParse(commodity.Cells["Id"].Value.ToString(), out editedCommodityId);
+
+            if (editedCommodityId < 0)
                 return;
 
-            StarSystem selectedSystem = gameData.StarSystems[SystemComboBox.SelectedIndex];
+            Commodity editedCommodity = selectedStation.Commodities.Find(x => x.id == editedCommodityId);
+            if (editedCommodity != null)
+            {
+                string editedName = (string)commodity.Cells["Commodity"].Value;
+                decimal editedBuy = (decimal)commodity.Cells["BuyPrice"].Value;
+                decimal editedSell = (decimal)commodity.Cells["SellPrice"].Value;
+                decimal editedSupply = (decimal)commodity.Cells["Supply"].Value;
 
-            if (selectedSystem.Stations.Count == 0 || StationComboBox.SelectedIndex < 0)
-                return;
+                editedCommodity.Name = editedName;
+                editedCommodity.BuyPrice = editedBuy;
+                editedCommodity.SellPrice = editedSell;
+                editedCommodity.Supply = editedSupply;
+                editedCommodity.LastUpdated = DateTime.Now;
+                editedCommodity.PriceCheckRequired = false;
 
-            Station selectedStation = selectedSystem.Stations[StationComboBox.SelectedIndex];
-
-            int editedCommodityIndex = -1;
-            int.TryParse(commodity.Cells["Index"].Value.ToString(), out editedCommodityIndex);
-
-            if (editedCommodityIndex < 0)
-                return;
-
-            Commodity editedCommodity = selectedStation.Commodities[editedCommodityIndex];
-
-            string editedName = (string)commodity.Cells["Commodity"].Value;
-            decimal editedBuy = (decimal)commodity.Cells["BuyPrice"].Value;
-            decimal editedSell = (decimal)commodity.Cells["SellPrice"].Value;
-            decimal editedSupply = (decimal)commodity.Cells["Supply"].Value;
-
-            editedCommodity.Name = editedName;
-            editedCommodity.BuyPrice = editedBuy;
-            editedCommodity.SellPrice = editedSell;
-            editedCommodity.Supply = editedSupply;
-            editedCommodity.LastUpdated = DateTime.Now;
-            editedCommodity.PriceCheckRequired = false;
-
-            commodity.Cells["LastUpdated"].Value = editedCommodity.LastUpdated;
+                commodity.Cells["LastUpdated"].Value = editedCommodity.LastUpdated;
+            }
         }
 
         private Station GetSeletedStation()
         {
-            if (gameData.StarSystems.Count == 0 || SystemComboBox.SelectedIndex < 0)
-                return null;
-
-            StarSystem selectedSystem = gameData.StarSystems[SystemComboBox.SelectedIndex];
-
-            if (selectedSystem.Stations.Count == 0 || StationComboBox.SelectedIndex < 0)
-                return null;
-
-            return selectedSystem.Stations[StationComboBox.SelectedIndex];
+            return StationComboBox.SelectedItem as Station;
         }
+
         private void UpdateSelectedStation(List<Commodity> list)
         {
             Station selectedStation = GetSeletedStation();
@@ -462,35 +671,15 @@ namespace Pitsea
 
         private void CommoditiesGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (GoodsTable.Columns[e.ColumnIndex].Name != "Delete" &&
-                GoodsTable.Columns[e.ColumnIndex].Name != "Up" &&
-                GoodsTable.Columns[e.ColumnIndex].Name != "Down")
+            if (GoodsTable.Columns[e.ColumnIndex].Name != "Delete" )
                 return;
 
-            int selectedSystemIndex = SystemComboBox.SelectedIndex;
-            int selectedStationIndex = StationComboBox.SelectedIndex;
-            int selectedCommodityIndex = int.Parse(GoodsTable.Rows[e.RowIndex].Cells["Index"].Value.ToString());
+            int selectedCommodityId = int.Parse(GoodsTable.Rows[e.RowIndex].Cells["Id"].Value.ToString());
 
             switch (GoodsTable.Columns[e.ColumnIndex].Name.ToString())
             {
                 case "Delete":
-                    gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities.RemoveAt(selectedCommodityIndex);
-                    break;
-                case "Up":
-                    if (selectedCommodityIndex > 0)
-                    {
-                        Commodity temp = gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex - 1];
-                        gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex - 1] = gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex];
-                        gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex] = temp;
-                    }
-                    break;
-                case "Down":
-                    if (selectedCommodityIndex < gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities.Count - 1)
-                    {
-                        Commodity temp = gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex];
-                        gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex] = gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex + 1];
-                        gameData.StarSystems[selectedSystemIndex].Stations[selectedStationIndex].Commodities[selectedCommodityIndex + 1] =  temp;
-                    }
+                    GetSeletedStation().Commodities.RemoveAll(x => x.id == selectedCommodityId); 
                     break;
                 default:
                     break;
@@ -525,15 +714,7 @@ namespace Pitsea
 
         private void TimestampAllButton_Click(object sender, EventArgs e)
         {
-            if (SystemComboBox.SelectedIndex < 0)
-                return;
-
-            StarSystem selectedSystem = gameData.StarSystems[SystemComboBox.SelectedIndex];
-
-            if (StationComboBox.SelectedIndex < 0)
-                return;
-
-            Station selectedStation = selectedSystem.Stations[StationComboBox.SelectedIndex];
+            Station selectedStation = StationComboBox.SelectedItem as Station;
 
             DateTime timeStamp = DateTime.Now;
 
@@ -558,7 +739,7 @@ namespace Pitsea
             }
             else
             {
-                Station station = GetSeletedStation();
+                Station station = StationComboBox.SelectedItem as Station;
                 if (station != null)
                 {
                     gd.GetUpdate(station.Commodities);
@@ -578,6 +759,126 @@ namespace Pitsea
         private void Main_Deactivate(object sender, EventArgs e)
         {
         }
+
+        private void configureCaptureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConfigScreenCapture gd = new ConfigScreenCapture(gameData);
+            gd.Left = this.Left + 20;
+            gd.Top = this.Top + 20; ;
+            gd.ShowDialog();
+        }
+
+        private void loadEddbStationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InfoBoxA ib = new InfoBoxA();
+            ib.Show();
+
+            eddb_systems s = new eddb_systems();
+            s.load_json();
+//            s.save_json(@"d:\systems2.json");
+            s.import_from_json();
+            ib.Hide();
+            ib.ShowDialog();
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                AutoSave();
+                Application.Exit();
+            }
+        }
+
+        public bool WriteReg(string KeyName, object Value)
+        {
+            try
+            {
+                // Setting
+                RegistryKey rk = Registry.CurrentUser;
+                String subKey = @"SOFTWARE\" + Application.ProductName;
+
+                // I have to use CreateSubKey 
+                // (create or open it if already exits), 
+                // 'cause OpenSubKey open a subKey as read-only
+                RegistryKey sk1 = rk.CreateSubKey(subKey);
+                // Save the value
+                sk1.SetValue(KeyName.ToUpper(), Value);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                // AAAAAAAAAAARGH, an error!
+                //ShowErrorMessage(e, "Writing registry " + KeyName.ToUpper());
+                return false;
+            }
+        }
+
+        public object ReadReg(string KeyName)
+        {
+            // Opening the registry key
+            RegistryKey rk = Registry.CurrentUser;
+            String subKey = @"SOFTWARE\" + Application.ProductName;
+
+            // Open a subKey as read-only
+            RegistryKey sk1 = rk.OpenSubKey(subKey);
+            // If the RegistrySubKey doesn't exist -> (null)
+            if (sk1 == null)
+            {
+                return null;
+            }
+            else
+            {
+                try
+                {
+                    return sk1.GetValue(KeyName.ToUpper());
+                }
+                catch (Exception e)
+                {
+                    // AAAAAAAAAAARGH, an error!
+//                    ShowErrorMessage(e, "Reading registry " + KeyName.ToUpper());
+                    return null;
+                }
+            }
+        }
+
+        private void Main_Shown(object sender, EventArgs e)
+        {
+            AutoLoad();
+        }
+
+        private void distanceBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void distanceBox_Leave(object sender, EventArgs e)
+        {
+            double val = 0;
+            double.TryParse( distanceBox.Text , out val );
+            Int64 v = (Int64)Math.Round(val);
+
+            Station s = GetSeletedStation();
+            s.DistanceToStar = v;
+        }
+
+        private void allSystemsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id; 
+            RefreshSystemComboBox();
+        }
+
+        private void localSystemCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id;
+            RefreshSystemComboBox();
+        }
+
     }
 
 

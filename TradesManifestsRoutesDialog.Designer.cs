@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TradesManifestsRoutesDialog));
-            this.TradesGrid = new CustomDataGridView();
+            this.TradesGrid = new Pitsea.CustomDataGridView();
             this.StartSystemFilterComboBox = new System.Windows.Forms.ComboBox();
             this.StartSystemFilterLabel = new System.Windows.Forms.Label();
             this.FilterGroupBox = new System.Windows.Forms.GroupBox();
@@ -58,9 +58,9 @@
             this.EndSystemFilterLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.ManifestsGrid = new CustomDataGridView();
+            this.ManifestsGrid = new Pitsea.CustomDataGridView();
             this.RoutesGroupBox = new System.Windows.Forms.GroupBox();
-            this.RoutesGridView = new CustomDataGridView();
+            this.RoutesGridView = new Pitsea.CustomDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.TradesGrid)).BeginInit();
             this.FilterGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -80,7 +80,7 @@
             this.TradesGrid.Location = new System.Drawing.Point(6, 19);
             this.TradesGrid.Name = "TradesGrid";
             this.TradesGrid.ReadOnly = true;
-            this.TradesGrid.Size = new System.Drawing.Size(805, 200);
+            this.TradesGrid.Size = new System.Drawing.Size(869, 200);
             this.TradesGrid.TabIndex = 0;
             // 
             // StartSystemFilterComboBox
@@ -130,7 +130,7 @@
             this.FilterGroupBox.Controls.Add(this.StartSystemFilterComboBox);
             this.FilterGroupBox.Location = new System.Drawing.Point(12, 12);
             this.FilterGroupBox.Name = "FilterGroupBox";
-            this.FilterGroupBox.Size = new System.Drawing.Size(817, 107);
+            this.FilterGroupBox.Size = new System.Drawing.Size(881, 107);
             this.FilterGroupBox.TabIndex = 3;
             this.FilterGroupBox.TabStop = false;
             this.FilterGroupBox.Text = "Filter by";
@@ -347,7 +347,7 @@
             this.groupBox1.Controls.Add(this.TradesGrid);
             this.groupBox1.Location = new System.Drawing.Point(12, 125);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(817, 225);
+            this.groupBox1.Size = new System.Drawing.Size(881, 225);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Trades";
@@ -357,7 +357,7 @@
             this.groupBox2.Controls.Add(this.ManifestsGrid);
             this.groupBox2.Location = new System.Drawing.Point(12, 356);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(817, 227);
+            this.groupBox2.Size = new System.Drawing.Size(881, 227);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Manifests";
@@ -372,7 +372,7 @@
             this.ManifestsGrid.Location = new System.Drawing.Point(6, 19);
             this.ManifestsGrid.Name = "ManifestsGrid";
             this.ManifestsGrid.ReadOnly = true;
-            this.ManifestsGrid.Size = new System.Drawing.Size(805, 200);
+            this.ManifestsGrid.Size = new System.Drawing.Size(869, 200);
             this.ManifestsGrid.TabIndex = 4;
             this.ManifestsGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ManifestsGrid_CellContentClick);
             // 
@@ -381,7 +381,7 @@
             this.RoutesGroupBox.Controls.Add(this.RoutesGridView);
             this.RoutesGroupBox.Location = new System.Drawing.Point(12, 589);
             this.RoutesGroupBox.Name = "RoutesGroupBox";
-            this.RoutesGroupBox.Size = new System.Drawing.Size(817, 227);
+            this.RoutesGroupBox.Size = new System.Drawing.Size(881, 227);
             this.RoutesGroupBox.TabIndex = 9;
             this.RoutesGroupBox.TabStop = false;
             this.RoutesGroupBox.Text = "Routes";
@@ -396,7 +396,7 @@
             this.RoutesGridView.Location = new System.Drawing.Point(6, 19);
             this.RoutesGridView.Name = "RoutesGridView";
             this.RoutesGridView.ReadOnly = true;
-            this.RoutesGridView.Size = new System.Drawing.Size(805, 200);
+            this.RoutesGridView.Size = new System.Drawing.Size(869, 200);
             this.RoutesGridView.TabIndex = 4;
             this.RoutesGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.RoutesGridView_CellContentClick);
             // 
@@ -404,13 +404,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(839, 826);
+            this.ClientSize = new System.Drawing.Size(905, 826);
             this.Controls.Add(this.RoutesGroupBox);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.FilterGroupBox);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TradesManifestsRoutesDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Trades, Manifests and Routes";
             ((System.ComponentModel.ISupportInitialize)(this.TradesGrid)).EndInit();
             this.FilterGroupBox.ResumeLayout(false);

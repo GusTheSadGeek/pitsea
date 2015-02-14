@@ -34,6 +34,9 @@
             this.StationLabel = new System.Windows.Forms.Label();
             this.StationTextBox = new System.Windows.Forms.TextBox();
             this.AddStationButton = new System.Windows.Forms.Button();
+            this.distanceBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // SystemLabel
@@ -71,7 +74,7 @@
             // 
             // AddStationButton
             // 
-            this.AddStationButton.Location = new System.Drawing.Point(60, 63);
+            this.AddStationButton.Location = new System.Drawing.Point(60, 91);
             this.AddStationButton.Name = "AddStationButton";
             this.AddStationButton.Size = new System.Drawing.Size(250, 23);
             this.AddStationButton.TabIndex = 4;
@@ -79,12 +82,40 @@
             this.AddStationButton.UseVisualStyleBackColor = true;
             this.AddStationButton.Click += new System.EventHandler(this.AddStationButton_Click);
             // 
+            // distanceBox
+            // 
+            this.distanceBox.Location = new System.Drawing.Point(60, 63);
+            this.distanceBox.Name = "distanceBox";
+            this.distanceBox.Size = new System.Drawing.Size(223, 20);
+            this.distanceBox.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(14, 66);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(49, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Distance";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(289, 66);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(20, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "LS";
+            // 
             // AddStationDialog
             // 
             this.AcceptButton = this.AddStationButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(322, 91);
+            this.ClientSize = new System.Drawing.Size(322, 116);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.distanceBox);
             this.Controls.Add(this.AddStationButton);
             this.Controls.Add(this.StationTextBox);
             this.Controls.Add(this.StationLabel);
@@ -105,5 +136,8 @@
         private System.Windows.Forms.Label StationLabel;
         private System.Windows.Forms.TextBox StationTextBox;
         private System.Windows.Forms.Button AddStationButton;
+        private System.Windows.Forms.TextBox distanceBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }

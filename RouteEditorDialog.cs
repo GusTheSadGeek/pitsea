@@ -54,11 +54,14 @@ namespace Pitsea
             manifestsBindingTable.Columns.Add("Investment");
             manifestsBindingTable.Columns.Add("Profit");
             manifestsBindingTable.Columns.Add("ROI");
+            manifestsBindingTable.Columns.Add("Dist");
+
 
             manifestsBindingTable.Columns["Index"].DataType = System.Type.GetType("System.Decimal");
             manifestsBindingTable.Columns["Investment"].DataType = System.Type.GetType("System.Decimal");
             manifestsBindingTable.Columns["Profit"].DataType = System.Type.GetType("System.Decimal");
             manifestsBindingTable.Columns["ROI"].DataType = System.Type.GetType("System.Decimal");
+            manifestsBindingTable.Columns["Dist"].DataType = System.Type.GetType("System.Decimal");
 
             int index = 0;
 
@@ -74,6 +77,7 @@ namespace Pitsea
                 newRow["Investment"] = manifest.Investment;
                 newRow["Profit"] = manifest.Profit;
                 newRow["ROI"] = decimal.Round(manifest.ROI, 2, MidpointRounding.AwayFromZero);
+                newRow["Dist"] = manifest.Trades[0].EndStation.DistanceToStar;
 
                 manifestsBindingTable.Rows.Add(newRow);
                 index++;

@@ -33,7 +33,6 @@
             this.SystemLabel = new System.Windows.Forms.Label();
             this.StationLabel = new System.Windows.Forms.Label();
             this.StationComboBox = new System.Windows.Forms.ComboBox();
-            this.AddCommodityButton = new System.Windows.Forms.Button();
             this.AddSystemButton = new System.Windows.Forms.Button();
             this.AddStationButton = new System.Windows.Forms.Button();
             this.RemoveSystemButton = new System.Windows.Forms.Button();
@@ -49,13 +48,24 @@
             this.saveDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitWithSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.configureCaptureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAndExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadEddbStationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GrabDataButton = new System.Windows.Forms.Button();
             this.FindCommodityButton = new System.Windows.Forms.Button();
+            this.distanceBox = new System.Windows.Forms.TextBox();
+            this.JumpUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.editSystemButton = new System.Windows.Forms.Button();
+            this.allSystemsCheckBox = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.localSystemCheckBox = new System.Windows.Forms.CheckBox();
             this.GoodsTable = new Pitsea.CustomDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.CargoSlotsNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CapitalNumericUpDown)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.JumpUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).BeginInit();
             this.SuspendLayout();
             // 
@@ -80,7 +90,7 @@
             // StationLabel
             // 
             this.StationLabel.AutoSize = true;
-            this.StationLabel.Location = new System.Drawing.Point(315, 30);
+            this.StationLabel.Location = new System.Drawing.Point(324, 31);
             this.StationLabel.Name = "StationLabel";
             this.StationLabel.Size = new System.Drawing.Size(40, 13);
             this.StationLabel.TabIndex = 2;
@@ -95,21 +105,11 @@
             this.StationComboBox.TabIndex = 3;
             this.StationComboBox.SelectedIndexChanged += new System.EventHandler(this.StationComboBox_SelectedIndexChanged);
             // 
-            // AddCommodityButton
-            // 
-            this.AddCommodityButton.Location = new System.Drawing.Point(15, 109);
-            this.AddCommodityButton.Name = "AddCommodityButton";
-            this.AddCommodityButton.Size = new System.Drawing.Size(180, 23);
-            this.AddCommodityButton.TabIndex = 8;
-            this.AddCommodityButton.Text = "Add New Commodity";
-            this.AddCommodityButton.UseVisualStyleBackColor = true;
-            this.AddCommodityButton.Click += new System.EventHandler(this.AddCommodityButton_Click);
-            // 
             // AddSystemButton
             // 
-            this.AddSystemButton.Location = new System.Drawing.Point(81, 54);
+            this.AddSystemButton.Location = new System.Drawing.Point(15, 54);
             this.AddSystemButton.Name = "AddSystemButton";
-            this.AddSystemButton.Size = new System.Drawing.Size(100, 23);
+            this.AddSystemButton.Size = new System.Drawing.Size(73, 23);
             this.AddSystemButton.TabIndex = 1;
             this.AddSystemButton.Text = "Add System";
             this.AddSystemButton.UseVisualStyleBackColor = true;
@@ -164,7 +164,7 @@
             0,
             0});
             this.CargoSlotsNumericUpDown.Name = "CargoSlotsNumericUpDown";
-            this.CargoSlotsNumericUpDown.Size = new System.Drawing.Size(207, 20);
+            this.CargoSlotsNumericUpDown.Size = new System.Drawing.Size(149, 20);
             this.CargoSlotsNumericUpDown.TabIndex = 7;
             // 
             // CapitalNumericUpDown
@@ -210,7 +210,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.testToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(779, 24);
@@ -223,6 +224,7 @@
             this.saveDataToolStripMenuItem,
             this.loadDataToolStripMenuItem,
             this.exitWithSaveToolStripMenuItem,
+            this.configureCaptureToolStripMenuItem,
             this.saveAndExitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -231,34 +233,56 @@
             // saveDataToolStripMenuItem
             // 
             this.saveDataToolStripMenuItem.Name = "saveDataToolStripMenuItem";
-            this.saveDataToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.saveDataToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveDataToolStripMenuItem.Text = "&Save Data File";
             this.saveDataToolStripMenuItem.Click += new System.EventHandler(this.saveDataToolStripMenuItem_Click);
             // 
             // loadDataToolStripMenuItem
             // 
             this.loadDataToolStripMenuItem.Name = "loadDataToolStripMenuItem";
-            this.loadDataToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.loadDataToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.loadDataToolStripMenuItem.Text = "&Open Data File";
             this.loadDataToolStripMenuItem.Click += new System.EventHandler(this.loadDataToolStripMenuItem_Click);
             // 
             // exitWithSaveToolStripMenuItem
             // 
             this.exitWithSaveToolStripMenuItem.Name = "exitWithSaveToolStripMenuItem";
-            this.exitWithSaveToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.exitWithSaveToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.exitWithSaveToolStripMenuItem.Text = "S&ave and Exit";
             this.exitWithSaveToolStripMenuItem.Click += new System.EventHandler(this.exitWithSaveToolStripMenuItem_Click);
+            // 
+            // configureCaptureToolStripMenuItem
+            // 
+            this.configureCaptureToolStripMenuItem.Name = "configureCaptureToolStripMenuItem";
+            this.configureCaptureToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.configureCaptureToolStripMenuItem.Text = "Configure Capture";
+            this.configureCaptureToolStripMenuItem.Click += new System.EventHandler(this.configureCaptureToolStripMenuItem_Click);
             // 
             // saveAndExitToolStripMenuItem
             // 
             this.saveAndExitToolStripMenuItem.Name = "saveAndExitToolStripMenuItem";
-            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveAndExitToolStripMenuItem.Text = "E&xit";
             this.saveAndExitToolStripMenuItem.Click += new System.EventHandler(this.saveAndExitToolStripMenuItem_Click);
             // 
+            // testToolStripMenuItem
+            // 
+            this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadEddbStationsToolStripMenuItem});
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
+            this.testToolStripMenuItem.Text = "test";
+            // 
+            // loadEddbStationsToolStripMenuItem
+            // 
+            this.loadEddbStationsToolStripMenuItem.Name = "loadEddbStationsToolStripMenuItem";
+            this.loadEddbStationsToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.loadEddbStationsToolStripMenuItem.Text = "load eddb stations";
+            this.loadEddbStationsToolStripMenuItem.Click += new System.EventHandler(this.loadEddbStationsToolStripMenuItem_Click);
+            // 
             // GrabDataButton
             // 
-            this.GrabDataButton.Location = new System.Drawing.Point(584, 27);
+            this.GrabDataButton.Location = new System.Drawing.Point(584, 54);
             this.GrabDataButton.Name = "GrabDataButton";
             this.GrabDataButton.Size = new System.Drawing.Size(121, 23);
             this.GrabDataButton.TabIndex = 30;
@@ -268,13 +292,84 @@
             // 
             // FindCommodityButton
             // 
-            this.FindCommodityButton.Location = new System.Drawing.Point(584, 79);
+            this.FindCommodityButton.Location = new System.Drawing.Point(584, 109);
             this.FindCommodityButton.Name = "FindCommodityButton";
             this.FindCommodityButton.Size = new System.Drawing.Size(121, 23);
             this.FindCommodityButton.TabIndex = 31;
             this.FindCommodityButton.Text = "Find Commodity";
             this.FindCommodityButton.UseVisualStyleBackColor = true;
             this.FindCommodityButton.Click += new System.EventHandler(this.FindCommodityButton_Click);
+            // 
+            // distanceBox
+            // 
+            this.distanceBox.Location = new System.Drawing.Point(584, 28);
+            this.distanceBox.Name = "distanceBox";
+            this.distanceBox.Size = new System.Drawing.Size(83, 20);
+            this.distanceBox.TabIndex = 32;
+            this.distanceBox.TextChanged += new System.EventHandler(this.distanceBox_TextChanged);
+            this.distanceBox.Leave += new System.EventHandler(this.distanceBox_Leave);
+            // 
+            // JumpUpDown
+            // 
+            this.JumpUpDown.DecimalPlaces = 1;
+            this.JumpUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.JumpUpDown.Location = new System.Drawing.Point(583, 83);
+            this.JumpUpDown.Name = "JumpUpDown";
+            this.JumpUpDown.Size = new System.Drawing.Size(101, 20);
+            this.JumpUpDown.TabIndex = 33;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(516, 85);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 34;
+            this.label1.Text = "Jump Dist";
+            // 
+            // editSystemButton
+            // 
+            this.editSystemButton.Location = new System.Drawing.Point(94, 54);
+            this.editSystemButton.Name = "editSystemButton";
+            this.editSystemButton.Size = new System.Drawing.Size(87, 23);
+            this.editSystemButton.TabIndex = 35;
+            this.editSystemButton.Text = "Edit System";
+            this.editSystemButton.UseVisualStyleBackColor = true;
+            // 
+            // allSystemsCheckBox
+            // 
+            this.allSystemsCheckBox.AutoSize = true;
+            this.allSystemsCheckBox.Location = new System.Drawing.Point(294, 54);
+            this.allSystemsCheckBox.Name = "allSystemsCheckBox";
+            this.allSystemsCheckBox.Size = new System.Drawing.Size(33, 17);
+            this.allSystemsCheckBox.TabIndex = 36;
+            this.allSystemsCheckBox.Text = "A";
+            this.allSystemsCheckBox.UseVisualStyleBackColor = true;
+            this.allSystemsCheckBox.CheckedChanged += new System.EventHandler(this.allSystemsCheckBox_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(673, 31);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(20, 13);
+            this.label2.TabIndex = 37;
+            this.label2.Text = "LS";
+            // 
+            // localSystemCheckBox
+            // 
+            this.localSystemCheckBox.AutoSize = true;
+            this.localSystemCheckBox.Location = new System.Drawing.Point(294, 29);
+            this.localSystemCheckBox.Name = "localSystemCheckBox";
+            this.localSystemCheckBox.Size = new System.Drawing.Size(32, 17);
+            this.localSystemCheckBox.TabIndex = 38;
+            this.localSystemCheckBox.Text = "L";
+            this.localSystemCheckBox.UseVisualStyleBackColor = true;
+            this.localSystemCheckBox.CheckedChanged += new System.EventHandler(this.localSystemCheckBox_CheckedChanged);
             // 
             // GoodsTable
             // 
@@ -298,6 +393,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(779, 862);
+            this.Controls.Add(this.localSystemCheckBox);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.allSystemsCheckBox);
+            this.Controls.Add(this.editSystemButton);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.JumpUpDown);
+            this.Controls.Add(this.distanceBox);
             this.Controls.Add(this.FindCommodityButton);
             this.Controls.Add(this.GrabDataButton);
             this.Controls.Add(this.TimestampAllButton);
@@ -311,7 +413,6 @@
             this.Controls.Add(this.RemoveSystemButton);
             this.Controls.Add(this.AddStationButton);
             this.Controls.Add(this.AddSystemButton);
-            this.Controls.Add(this.AddCommodityButton);
             this.Controls.Add(this.StationComboBox);
             this.Controls.Add(this.StationLabel);
             this.Controls.Add(this.SystemLabel);
@@ -323,10 +424,14 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Pitsea";
             this.Deactivate += new System.EventHandler(this.Main_Deactivate);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
+            this.Load += new System.EventHandler(this.Main_Load);
+            this.Shown += new System.EventHandler(this.Main_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.CargoSlotsNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CapitalNumericUpDown)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.JumpUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -339,7 +444,6 @@
         private System.Windows.Forms.Label SystemLabel;
         private System.Windows.Forms.Label StationLabel;
         private System.Windows.Forms.ComboBox StationComboBox;
-        private System.Windows.Forms.Button AddCommodityButton;
         private System.Windows.Forms.Button AddSystemButton;
         private System.Windows.Forms.Button AddStationButton;
         private System.Windows.Forms.Button RemoveSystemButton;
@@ -359,6 +463,16 @@
         private System.Windows.Forms.ToolStripMenuItem saveAndExitToolStripMenuItem;
         private System.Windows.Forms.Button GrabDataButton;
         private System.Windows.Forms.Button FindCommodityButton;
+        private System.Windows.Forms.ToolStripMenuItem configureCaptureToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadEddbStationsToolStripMenuItem;
+        private System.Windows.Forms.TextBox distanceBox;
+        private System.Windows.Forms.NumericUpDown JumpUpDown;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button editSystemButton;
+        private System.Windows.Forms.CheckBox allSystemsCheckBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox localSystemCheckBox;
     }
 }
 

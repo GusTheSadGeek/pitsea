@@ -49,6 +49,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -94,12 +96,25 @@
     <Compile Include="FindCommodity.Designer.cs">
       <DependentUpon>FindCommodity.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigScreenCapture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigScreenCapture.Designer.cs">
+      <DependentUpon>ConfigScreenCapture.cs</DependentUpon>
+    </Compile>
     <Compile Include="GameData.cs" />
     <Compile Include="GrabData.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GrabData.Designer.cs">
       <DependentUpon>GrabData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="eddb_station.cs" />
+    <Compile Include="InfoBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InfoBox.Designer.cs">
+      <DependentUpon>InfoBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -147,8 +162,14 @@
     <EmbeddedResource Include="FindCommodity.resx">
       <DependentUpon>FindCommodity.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ConfigScreenCapture.resx">
+      <DependentUpon>ConfigScreenCapture.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GrabData.resx">
       <DependentUpon>GrabData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InfoBox.resx">
+      <DependentUpon>InfoBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

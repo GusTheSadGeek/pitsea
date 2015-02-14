@@ -25,6 +25,8 @@ namespace Pitsea
         public TradesManifestsRoutesDialog(GameData gameData)
         {
             InitializeComponent();
+            this.Left = Main.Instance.Left + 40;
+            this.Top = Main.Instance.Top + 20;
             this.Icon = new Icon("Graphics\\Pitsea.ico");
 
             this.gameData = gameData;
@@ -139,13 +141,16 @@ namespace Pitsea
             tradesBindingTable.Columns.Add("SellPrice");
             tradesBindingTable.Columns.Add("Profit");
             tradesBindingTable.Columns.Add("ROI");
+            tradesBindingTable.Columns.Add("J1");
+            tradesBindingTable.Columns.Add("J2");
 
             tradesBindingTable.Columns["BuyPrice"].DataType = System.Type.GetType("System.Decimal");
             tradesBindingTable.Columns["Supply"].DataType = System.Type.GetType("System.Decimal");
             tradesBindingTable.Columns["SellPrice"].DataType = System.Type.GetType("System.Decimal");
             tradesBindingTable.Columns["Profit"].DataType = System.Type.GetType("System.Decimal");
             tradesBindingTable.Columns["ROI"].DataType = System.Type.GetType("System.Decimal");
-
+            tradesBindingTable.Columns["J1"].DataType = System.Type.GetType("System.Decimal");
+            tradesBindingTable.Columns["J2"].DataType = System.Type.GetType("System.Decimal");
             foreach (Trade trade in gameData.Trades)
             {
                 DataRow newRow = tradesBindingTable.NewRow();
@@ -160,7 +165,8 @@ namespace Pitsea
                 newRow["SellPrice"] = trade.Commodity.SellPrice;
                 newRow["Profit"] = trade.ProfitPerUnit;
                 newRow["ROI"] = decimal.Round(trade.ROI, 2, MidpointRounding.AwayFromZero);
-
+                newRow["J1"] = trade.StartSystem.Jumps();
+                newRow["J2"] = trade.EndSystem.Jumps();
                 tradesBindingTable.Rows.Add(newRow);
             }
         }
@@ -224,7 +230,7 @@ namespace Pitsea
             manifestsBindingTable = new DataTable();
 
             manifestsBindingTable.Columns.Add("Source");
-            manifestsBindingTable.Columns.Add("Index");
+            manifestsBindingTable.Columns.Add("Manifest");
             manifestsBindingTable.Columns.Add("StartSystem");
             manifestsBindingTable.Columns.Add("StartStation");
             manifestsBindingTable.Columns.Add("EndSystem");
@@ -232,12 +238,19 @@ namespace Pitsea
             manifestsBindingTable.Columns.Add("Investment");
             manifestsBindingTable.Columns.Add("Profit");
             manifestsBindingTable.Columns.Add("ROI");
+            manifestsBindingTable.Columns.Add("J1");
+            manifestsBindingTable.Columns.Add("J2");
+            manifestsBindingTable.Columns.Add("Dist");
+            manifestsBindingTable.Columns.Add("X");
 
-            manifestsBindingTable.Columns["Index"].DataType = System.Type.GetType("System.Decimal");
+            manifestsBindingTable.Columns["Manifest"].DataType = System.Type.GetType("Pitsea.Manifest");
             manifestsBindingTable.Columns["Investment"].DataType = System.Type.GetType("System.Decimal");
             manifestsBindingTable.Columns["Profit"].DataType = System.Type.GetType("System.Decimal");
             manifestsBindingTable.Columns["ROI"].DataType = System.Type.GetType("System.Decimal");
-
+            manifestsBindingTable.Columns["J1"].DataType = System.Type.GetType("System.Decimal");
+            manifestsBindingTable.Columns["J2"].DataType = System.Type.GetType("System.Decimal");
+            manifestsBindingTable.Columns["Dist"].DataType = System.Type.GetType("System.Decimal");
+            manifestsBindingTable.Columns["X"].DataType = System.Type.GetType("System.Decimal");
             int index = 0;
 
             foreach(Manifest manifest in gameData.OptimalManifests)
@@ -245,7 +258,7 @@ namespace Pitsea
                 DataRow newRow = manifestsBindingTable.NewRow();
 
                 newRow["Source"] = "Optimal";
-                newRow["Index"] = index;
+                newRow["Manifest"] = manifest;
                 newRow["StartSystem"] = manifest.Trades[0].StartSystem.Name;
                 newRow["StartStation"] = manifest.Trades[0].StartStation.Name;
                 newRow["EndSystem"] = manifest.Trades[0].EndSystem.Name;
@@ -253,6 +266,21 @@ namespace Pitsea
                 newRow["Investment"] = manifest.Investment;
                 newRow["Profit"] = manifest.Profit;
                 newRow["ROI"] = decimal.Round(manifest.ROI, 2, MidpointRounding.AwayFromZero);
+                newRow["J1"] = manifest.Trades[0].StartSystem.Jumps();
+                newRow["J2"] = manifest.Trades[0].EndSystem.Jumps();
+
+                Decimal dist = manifest.Trades[0].EndStation.DistanceToStar + manifest.Trades[0].StartStation.DistanceToStar;
+
+                if (( manifest.Trades[0].EndStation.DistanceToStar == 0 ) || ( manifest.Trades[0].StartStation.DistanceToStar == 0 ))
+                {
+                    dist *= -1;
+                }
+
+                newRow["Dist"] = dist;
+                if (dist > 0)
+                    newRow["X"] = manifest.Profit / dist;
+                else
+                    newRow["X"] = 0;
 
                 manifestsBindingTable.Rows.Add(newRow);
 
@@ -310,7 +338,7 @@ namespace Pitsea
             ManifestsGrid.Columns.Insert(2, newColumn);
 
             ManifestsGrid.Columns["Source"].Visible = false;
-            ManifestsGrid.Columns["Index"].Visible = false;
+            ManifestsGrid.Columns["Manifest"].Visible = false;
         }
         private void AddManifestsRowFilter(string filter)
         {
@@ -322,14 +350,14 @@ namespace Pitsea
             routesBindingTable = new DataTable();
 
             routesBindingTable.Columns.Add("Source");
-            routesBindingTable.Columns.Add("Index");
+            routesBindingTable.Columns.Add("Route");
             routesBindingTable.Columns.Add("CenterSystem");
             routesBindingTable.Columns.Add("CenterStation");
             routesBindingTable.Columns.Add("Trips");
             routesBindingTable.Columns.Add("TotalProfit");
             routesBindingTable.Columns.Add("AvgProfitPerTrip");
 
-            routesBindingTable.Columns["Index"].DataType = System.Type.GetType("System.Decimal");
+            routesBindingTable.Columns["Route"].DataType = System.Type.GetType("Pitsea.Route");// System.Type.GetType("System.Decimal");
             routesBindingTable.Columns["Trips"].DataType = System.Type.GetType("System.Decimal");
             routesBindingTable.Columns["TotalProfit"].DataType = System.Type.GetType("System.Decimal");
             routesBindingTable.Columns["AvgProfitPerTrip"].DataType = System.Type.GetType("System.Decimal");
@@ -341,7 +369,7 @@ namespace Pitsea
                 DataRow newRow = routesBindingTable.NewRow();
 
                 newRow["Source"] = "Optimal";
-                newRow["Index"] = index;
+                newRow["Route"] = route;
                 newRow["CenterSystem"] = route.Manifests[0].Trades[0].StartSystem.Name;
                 newRow["CenterStation"] = route.Manifests[0].Trades[0].StartStation.Name;
                 newRow["Trips"] = route.Trips;
@@ -380,7 +408,7 @@ namespace Pitsea
             RoutesGridView.Columns.Insert(2, newColumn);
 
             RoutesGridView.Columns["Source"].Visible = false;
-            RoutesGridView.Columns["Index"].Visible = false;
+            RoutesGridView.Columns["Route"].Visible = false;
         }
         private void AddRoutesRowFilter(string filter)
         {
@@ -453,10 +481,7 @@ namespace Pitsea
             if (ManifestsGrid.Columns[e.ColumnIndex].Name != "View")
                 return;
 
-            string resultIndex = ManifestsGrid.Rows[e.RowIndex].Cells["Index"].Value.ToString();
-            int sourceIndex = int.Parse(resultIndex);
-
-            Manifest selectedManifest = gameData.OptimalManifests[sourceIndex];
+            Manifest selectedManifest = ManifestsGrid.Rows[e.RowIndex].Cells["Manifest"].Value as Manifest;
 
             ManifestEditorDialog dialog = new ManifestEditorDialog(selectedManifest);
             dialog.ShowDialog();
@@ -466,10 +491,11 @@ namespace Pitsea
             if (RoutesGridView.Columns[e.ColumnIndex].Name != "View")
                 return;
 
-            string resultIndex = RoutesGridView.Rows[e.RowIndex].Cells["Index"].Value.ToString();
-            int sourceIndex = int.Parse(resultIndex);
+//            string resultIndex = RoutesGridView.Rows[e.RowIndex].Cells["Index"].Value.ToString();
+//            int sourceIndex = int.Parse(resultIndex);
 
-            Route selectedRoute = gameData.OptimalRoutes[sourceIndex];
+//            Route selectedRoute = gameData.OptimalRoutes[sourceIndex];
+            Route selectedRoute = RoutesGridView.Rows[e.RowIndex].Cells["Route"].Value as Route;
 
             RouteEditorDialog dialog = new RouteEditorDialog(selectedRoute);
             dialog.ShowDialog();

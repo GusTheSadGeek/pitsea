@@ -24,8 +24,11 @@ namespace Pitsea
         bool dataUpdate = false;
         private GameData gcd;
         private TesseractEngine engine;
+        private InfoBoxA infoBox;
+        string CurrentCategory;
         public GrabData(GameData grabComData)
         {
+            infoBox = new InfoBoxA();
             gcd = grabComData;
             InitializeComponent();
             init_commodities(grabComData);
@@ -101,14 +104,19 @@ namespace Pitsea
 
         private void button2_Click(object sender, EventArgs e)
         {
-            scan_and_process();
+            //infoBox.Show();
+            scan_and_process(true);
             textBox1.Text = market.get_market_string();
         }
 
-        private void scan_and_process()
+        private void scan_and_process(bool debug=false)
         {
             Bitmap mdata = grab_market_data();
             scanned_text = scan_bitmap(mdata);
+            if (debug)
+            {
+                infoBox.Message(scanned_text.Replace("\n","\r\n"));
+            }
             process_scanned_text(scanned_text);
         }
 
@@ -153,7 +161,8 @@ namespace Pitsea
         {
 //            Rectangle cropRect = new Rectangle(50, 100, 1250, 1000);
 //            Rectangle cropRect = new Rectangle(100, 230, 1250, 650);
-            Rectangle cropRect = new Rectangle(50, 295, 1250, 750); 
+//            Rectangle cropRect = new Rectangle(50, 295, 1250, 750);
+            Rectangle cropRect = gcd.SaveGameData.captureRect;
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
             using (Bitmap bmpScreenCapture = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
@@ -167,7 +176,7 @@ namespace Pitsea
                                      bmpScreenCapture.Size,
                                      CopyPixelOperation.SourceCopy);
 
-//                    bmpScreenCapture.Save("d:\\q2.bmp");
+                    bmpScreenCapture.Save("d:\\q2.bmp");
                     
                     using (Graphics g2 = Graphics.FromImage(target))
                     {
@@ -175,7 +184,7 @@ namespace Pitsea
                                          cropRect,
                                          GraphicsUnit.Pixel);
                     }
-
+                    target.Save("d:\\q3.bmp");
                     //long ticks = DateTime.UtcNow.Ticks - DateTime.Parse("01/01/1970 00:00:00").Ticks;
                     //ticks /= 10000000; //Convert windows ticks to seconds
                     //string timestamp = ticks.ToString();
@@ -233,7 +242,7 @@ namespace Pitsea
             }
 
 
-
+            CurrentCategory = "------------------";
             StringBuilder sb = new StringBuilder();
             foreach (string line in rawlines)
             {
@@ -414,11 +423,14 @@ namespace Pitsea
         {
 
             float bestscore = 0f;
-            string CurrentCategory = "-----------------------";
+            //string CurrentCategory = "-----------------------";
             GrabCommodity bestCommodity = null;
             foreach (var commodity in commodities)
             {
-
+                if (CurrentCategory == commodity.Name)
+                {
+                    continue;
+                }
                 float myscore = commodity.test(line, CurrentCategory);
                 if (myscore > bestscore)
                 {
@@ -515,6 +527,14 @@ namespace Pitsea
             dataUpdate = true;
             Close();
         }
+
+        private void ConfigButton_Click(object sender, EventArgs e)
+        {
+            ConfigScreenCapture gd = new ConfigScreenCapture(gcd);
+            gd.Left = this.Left + 20;
+            gd.Top = this.Top + 20; ;
+            gd.ShowDialog();
+        }
     }
 
     public class Market
@@ -523,7 +543,29 @@ namespace Pitsea
 
         public Market()
         {
-
+            //var types = GameData.Instance.SaveGameData.commodityTypes;
+            //List<GrabCommodityDatum> d = GameData.Instance.SaveGameData.commodityList;
+            //foreach (GrabCommodityDatum g in d)
+            //{
+            //    if (g.Name == null)
+            //    {
+            //        CommodityCategory cc = GameData.Instance.SaveGameData.commodityCategories.Find(x => x.name.ToUpper() == g.Category.ToUpper());
+            //        if (cc != null)
+            //        {
+            //            g.id = cc.id;
+            //            cc.scanName = g.Category;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        CommodityType ct = types.Find(x => x.name.ToUpper() == g.Name.ToUpper());
+            //        if (ct != null)
+            //        {
+            //            g.id = ct.id;
+            //            ct.scanNames = g.Names;
+            //        }
+            //    }
+            //}
         }
 
         public List<Commodity> GetCommodities()
@@ -541,6 +583,7 @@ namespace Pitsea
                     com.Cat = good.CategoryName;
                     com.Supply = good.Demandsupply;
                     com.LastUpdated = ts;
+                    com.SetId(good.id);
                     comms.Add(com);
                 }
             }
@@ -564,11 +607,13 @@ namespace Pitsea
             {
                 if ((good.DataValid) && (!good.Category))
                 {
-                    Commodity com = comms.Find(a => a.Name == good.Name);
+                    Commodity com = comms.Find(a => a.id == good.id);
+//                        == good.Name);
                     if (com == null)
                     {
                         com = new Commodity();
                         comms.Add(com);
+                        com.SetId(good.id);
                     }
                     else
                     {
@@ -625,6 +670,7 @@ namespace Pitsea
     {
         private string[] names;
         private string category;
+        public Int64 id;
 
         public string Category
         {
@@ -678,9 +724,11 @@ namespace Pitsea
         private bool valid_data = false;
         private int hcount;
         private int buyCount;
+        public Int64 id;
 
         public GrabCommodity(GrabCommodityDatum datum)
         {
+            id = datum.id;
             category = datum.Category;
             if (datum.Names == null)
             {
