@@ -132,6 +132,7 @@
             this.Controls.Add(this.SystemLabel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddSystemDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Add a System";
             this.ResumeLayout(false);
             this.PerformLayout();

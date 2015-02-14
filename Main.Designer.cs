@@ -52,6 +52,8 @@
             this.saveAndExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadEddbStationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GrabDataButton = new System.Windows.Forms.Button();
             this.FindCommodityButton = new System.Windows.Forms.Button();
             this.distanceBox = new System.Windows.Forms.TextBox();
@@ -62,11 +64,15 @@
             this.label2 = new System.Windows.Forms.Label();
             this.localSystemCheckBox = new System.Windows.Forms.CheckBox();
             this.GoodsTable = new Pitsea.CustomDataGridView();
+            this.PurgeDataButton = new System.Windows.Forms.Button();
+            this.PurgeDaysUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.CargoSlotsNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CapitalNumericUpDown)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.JumpUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PurgeDaysUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // SystemComboBox
@@ -147,9 +153,9 @@
             // 
             // CalculateAllTradesButton
             // 
-            this.CalculateAllTradesButton.Location = new System.Drawing.Point(201, 109);
+            this.CalculateAllTradesButton.Location = new System.Drawing.Point(332, 109);
             this.CalculateAllTradesButton.Name = "CalculateAllTradesButton";
-            this.CalculateAllTradesButton.Size = new System.Drawing.Size(180, 23);
+            this.CalculateAllTradesButton.Size = new System.Drawing.Size(96, 23);
             this.CalculateAllTradesButton.TabIndex = 9;
             this.CalculateAllTradesButton.Text = "Calculate Trades";
             this.CalculateAllTradesButton.UseVisualStyleBackColor = true;
@@ -199,9 +205,9 @@
             // 
             // TimestampAllButton
             // 
-            this.TimestampAllButton.Location = new System.Drawing.Point(387, 109);
+            this.TimestampAllButton.Location = new System.Drawing.Point(434, 109);
             this.TimestampAllButton.Name = "TimestampAllButton";
-            this.TimestampAllButton.Size = new System.Drawing.Size(181, 23);
+            this.TimestampAllButton.Size = new System.Drawing.Size(144, 23);
             this.TimestampAllButton.TabIndex = 28;
             this.TimestampAllButton.Text = "Timestamp All Commodities";
             this.TimestampAllButton.UseVisualStyleBackColor = true;
@@ -211,7 +217,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.testToolStripMenuItem});
+            this.testToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(779, 24);
@@ -270,15 +277,30 @@
             this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadEddbStationsToolStripMenuItem});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
-            this.testToolStripMenuItem.Text = "test";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
+            this.testToolStripMenuItem.Text = "Import";
             // 
             // loadEddbStationsToolStripMenuItem
             // 
             this.loadEddbStationsToolStripMenuItem.Name = "loadEddbStationsToolStripMenuItem";
-            this.loadEddbStationsToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
-            this.loadEddbStationsToolStripMenuItem.Text = "load eddb stations";
+            this.loadEddbStationsToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.loadEddbStationsToolStripMenuItem.Text = "load data from eddb";
             this.loadEddbStationsToolStripMenuItem.Click += new System.EventHandler(this.loadEddbStationsToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // GrabDataButton
             // 
@@ -387,12 +409,42 @@
             this.GoodsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellContentClick);
             this.GoodsTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CommoditiesGrid_CellEndEdit);
             // 
+            // PurgeDataButton
+            // 
+            this.PurgeDataButton.Location = new System.Drawing.Point(12, 109);
+            this.PurgeDataButton.Name = "PurgeDataButton";
+            this.PurgeDataButton.Size = new System.Drawing.Size(100, 23);
+            this.PurgeDataButton.TabIndex = 39;
+            this.PurgeDataButton.Text = "Purge Older Than";
+            this.PurgeDataButton.UseVisualStyleBackColor = true;
+            this.PurgeDataButton.Click += new System.EventHandler(this.PurgeDataButton_Click);
+            // 
+            // PurgeDaysUpDown
+            // 
+            this.PurgeDaysUpDown.Location = new System.Drawing.Point(118, 109);
+            this.PurgeDaysUpDown.Name = "PurgeDaysUpDown";
+            this.PurgeDaysUpDown.Size = new System.Drawing.Size(47, 20);
+            this.PurgeDaysUpDown.TabIndex = 40;
+            this.PurgeDaysUpDown.Value = 14;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(171, 111);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(31, 13);
+            this.label3.TabIndex = 41;
+            this.label3.Text = "Days";
+            // 
             // Main
             // 
             this.AcceptButton = this.CalculateAllTradesButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(779, 862);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.PurgeDaysUpDown);
+            this.Controls.Add(this.PurgeDataButton);
             this.Controls.Add(this.localSystemCheckBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.allSystemsCheckBox);
@@ -433,6 +485,7 @@
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.JumpUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GoodsTable)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PurgeDaysUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -473,6 +526,11 @@
         private System.Windows.Forms.CheckBox allSystemsCheckBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox localSystemCheckBox;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Button PurgeDataButton;
+        private System.Windows.Forms.NumericUpDown PurgeDaysUpDown;
+        private System.Windows.Forms.Label label3;
     }
 }
 

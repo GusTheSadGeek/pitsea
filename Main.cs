@@ -392,6 +392,8 @@ namespace Pitsea
 
         private void CalculateAllTradesManifestsAndRoutesButton_Click(object sender, EventArgs e)
         {
+            if (SystemComboBox.SelectedItem == null) return;
+
             gameData.Capital = CapitalNumericUpDown.Value;
             gameData.CargoSlots = CargoSlotsNumericUpDown.Value;
             gameData.JumpDist = JumpUpDown.Value;
@@ -456,12 +458,19 @@ namespace Pitsea
             string lastSavePath = ReadReg("lastsavepath") as string;
             if (lastSavePath != null)
             {
-                InfoBoxA ib = new InfoBoxA();
-                ib.Show();
-                ib.Message("Autoloading.......");
-                string path = Path.GetDirectoryName(lastSavePath);
-                TryLoadFile(path + @"\autosave.pitdata");
-                ib.Close();
+                try
+                {
+                    string path = Path.GetDirectoryName(lastSavePath);
+                    InfoBoxA ib = new InfoBoxA();
+                    ib.Show();
+                    ib.Message("Autoloading.......");
+                    TryLoadFile(path + @"\autosave.pitdata");
+                    ib.Close();
+                }
+                catch
+                {
+                    // Fail silently...
+                }
             }
         }
         
@@ -526,27 +535,7 @@ namespace Pitsea
 
                     RefreshSystemComboBox();
 
-//                    SystemComboBox.DataSource = null;
-////                    StationComboBox.DataSource = null;
-//                    SystemComboBox.Items.Clear();
-////                    StationComboBox.Items.Clear();
-
-//                    SystemComboBox.DataSource = gameData.StarSystems.FindAll(x => x.Stations.Count > 0);
-
-//                    SystemComboBox.DisplayMember = "Name";
-//                    SystemComboBox.ValueMember = "Name";
-
-//                    SystemComboBox.SelectedIndex = 0;
-//                    int i = 0;
-//                    foreach(StarSystem s in (SystemComboBox.DataSource as List<StarSystem>))
-//                    {
-//                        if (s.Id == gameData.CurrentSystemId)
-//                        {
-//                            SystemComboBox.SelectedIndex = i;
-//                            break;
-//                        }
-//                        ++i;
-//                    }
+                    SystemComboBox_SelectedIndexChanged(this, EventArgs.Empty);
 
                     CapitalNumericUpDown.Value = gameData.Capital;
                     CargoSlotsNumericUpDown.Value = gameData.CargoSlots;
@@ -715,13 +704,15 @@ namespace Pitsea
         private void TimestampAllButton_Click(object sender, EventArgs e)
         {
             Station selectedStation = StationComboBox.SelectedItem as Station;
+            if (selectedStation != null)
+            {
+                DateTime timeStamp = DateTime.Now;
 
-            DateTime timeStamp = DateTime.Now;
+                foreach (Commodity commodity in selectedStation.Commodities)
+                    commodity.LastUpdated = timeStamp;
 
-            foreach (Commodity commodity in selectedStation.Commodities)
-                commodity.LastUpdated = timeStamp;
-
-            BindCommodities();
+                BindCommodities();
+            }
         }
 
         private void GrabDataButton_Click(object sender, EventArgs e)
@@ -777,8 +768,11 @@ namespace Pitsea
             s.load_json();
 //            s.save_json(@"d:\systems2.json");
             s.import_from_json();
+            InfoBoxA.Instance.Message("DONE");
+            InfoBoxA.Instance.Message("DONE");
             ib.Hide();
             ib.ShowDialog();
+            RefreshSystemComboBox();
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -869,16 +863,44 @@ namespace Pitsea
 
         private void allSystemsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id; 
-            RefreshSystemComboBox();
+            if (SystemComboBox.SelectedItem != null)
+            {
+                gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id;
+                RefreshSystemComboBox();
+            }
         }
 
         private void localSystemCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id;
-            RefreshSystemComboBox();
+            if (SystemComboBox.SelectedItem != null)
+            {
+                gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id;
+                RefreshSystemComboBox();
+            }
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            About about = new About();
+            about.ShowDialog();
+            about.Dispose();
+        }
+
+        private void PurgeDataButton_Click(object sender, EventArgs e)
+        {
+            int purgeVal = (int)PurgeDaysUpDown.Value;
+
+            DateTime purgeTime = DateTime.Now.AddDays(-purgeVal);
+
+            foreach (StarSystem system in gameData.StarSystems)
+            {
+                foreach (Station station in system.Stations)
+                {
+                    station.Commodities.RemoveAll(X => X.LastUpdated < purgeTime);    
+                }
+            }
+            BindCommodities();
+        }
     }
 
 

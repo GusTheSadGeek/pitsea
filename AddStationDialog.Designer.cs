@@ -123,6 +123,7 @@
             this.Controls.Add(this.SystemLabel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddStationDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Add a Station";
             this.ResumeLayout(false);
             this.PerformLayout();

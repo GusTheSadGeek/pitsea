@@ -81,6 +81,7 @@
             this.Controls.Add(this.commodityComboBox);
             this.Controls.Add(this.label1);
             this.Name = "FindCommodity";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "FindCommodity";
             this.Load += new System.EventHandler(this.FindCommodity_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();

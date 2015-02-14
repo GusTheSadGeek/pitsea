@@ -64,6 +64,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
     <Compile Include="AddEditCommodityDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -147,6 +153,9 @@
     <Compile Include="TradesManifestsRoutesDialog.Designer.cs">
       <DependentUpon>TradesManifestsRoutesDialog.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AddEditCommodityDialog.resx">
       <DependentUpon>AddEditCommodityDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -202,6 +211,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="README.md" />
     <None Include="tessdata\eng.cube.bigrams" />
     <None Include="tessdata\eng.cube.fold" />
     <None Include="tessdata\eng.cube.lm" />

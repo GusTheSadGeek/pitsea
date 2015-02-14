@@ -246,7 +246,7 @@ namespace Pitsea
                     ss = new StarSystem();
                     ss.Name = ed_system.name;
                     starSystems.Add(ss);
-                    InfoBoxA.Instance.Message(ed_system.name + " New system");
+                  //  InfoBoxA.Instance.Message(ed_system.name + " New system");
                 }
                 ss.Id = ed_system.id;
                 ss.Coordinate = new Coordinate(ed_system.x, ed_system.y, ed_system.z); 
@@ -281,7 +281,8 @@ namespace Pitsea
                         }
                         foreach (eddb_commodity ed_comm in ed_station2.listings)
                         {
-                            if (ed_comm.collected_at == newest)
+//                            if (ed_comm.collected_at == newest)
+                            if ((ed_comm.sell_price > 0) || (ed_comm.buy_price>0))
                             {
                                 eddb_commodity_type comm_type = commoditie_types.Find(x => x.id == ed_comm.commodity_id);
                                 //String n = comm_type.name;
@@ -289,7 +290,7 @@ namespace Pitsea
                                 //{
                                 //    case "H.E. Suits": n = "HE SUITS"; break;
                                 //    case "Non-lethal Weapons": n = "NONLETHAL WEAPONS"; break;
-                                //   // case "Liquor": n = "LIQUOR"; break;
+                                //    case "Liquor": n = "LIQUOR"; break;
                                 //    case "Auto-Fabricators": n = "AUTOFABRICATORS"; break;
                                 //    case "Agri-Medicines": n = "AGRI MEDICINES"; break;
                                 //}
@@ -302,7 +303,7 @@ namespace Pitsea
                                     commodity.Name = comm_type.name;
                                     stat.Commodities.Add(commodity);
                                     commodity.LastUpdated = FromUnixTime(ed_comm.collected_at);
-                                    //                                Console.WriteLine(comm_type.name + "   " + ed_system.name+"    "+stat.Name);
+                                    //   Console.WriteLine(comm_type.name + "   " + ed_system.name+"    "+stat.Name);
                                 }
                                 if (commodity.LastUpdated <= FromUnixTime(ed_comm.collected_at))
                                 {
@@ -316,10 +317,10 @@ namespace Pitsea
                                     commodity.LastUpdated = FromUnixTime(ed_comm.collected_at);
                                 }
                             }
-                            else
-                            {
+                            //else
+                            //{
 
-                            }
+                            //}
                         }
                     }
                 }

@@ -211,6 +211,7 @@
             this.Controls.Add(this.SystemLabel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddEditCommodityDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Add / Edit Commodity";
             this.ResumeLayout(false);
             this.PerformLayout();

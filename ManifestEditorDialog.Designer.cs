@@ -38,7 +38,7 @@
             this.ROITextBox = new System.Windows.Forms.TextBox();
             this.ProfitLabel = new System.Windows.Forms.Label();
             this.ROILabel = new System.Windows.Forms.Label();
-            this.CargoGrid = new CustomDataGridView();
+            this.CargoGrid = new Pitsea.CustomDataGridView();
             this.StartSystemComboBox = new System.Windows.Forms.ComboBox();
             this.StartStationComboBox = new System.Windows.Forms.ComboBox();
             this.EndSystemComboBox = new System.Windows.Forms.ComboBox();
@@ -226,6 +226,7 @@
             this.Controls.Add(this.StartStationLabel);
             this.Controls.Add(this.StartSystemLabel);
             this.Name = "ManifestEditorDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Manifest Viewer/Editor";
             ((System.ComponentModel.ISupportInitialize)(this.CargoGrid)).EndInit();
             this.ResumeLayout(false);

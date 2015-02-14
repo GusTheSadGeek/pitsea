@@ -14,6 +14,8 @@ namespace Pitsea
 
         public ManifestEditorDialog(Manifest manifest, EditorMode mode = EditorMode.View)
         {
+            this.Top = Main.Instance.Top + 40;
+            this.Left = Main.Instance.Left + 40; 
             InitializeComponent();
             this.Icon = new Icon("Graphics\\Pitsea.ico");
 

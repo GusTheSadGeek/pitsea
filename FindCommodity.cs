@@ -18,6 +18,8 @@ namespace Pitsea
 
         public FindCommodity(GameData gd, GameData gcd)
         {
+            this.Top = Main.Instance.Top + 40;
+            this.Left = Main.Instance.Left + 40; 
             InitializeComponent();
             gameData = gd;
             grabCommodityData = gcd;

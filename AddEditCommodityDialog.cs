@@ -18,6 +18,8 @@ namespace Pitsea
 
         public AddEditCommodityDialog(string system, string station, List<StarSystem> systems)
         {
+            this.Top = Main.Instance.Top + 40;
+            this.Left = Main.Instance.Left + 40; 
             InitializeComponent();
             this.Icon = new Icon("Graphics\\Pitsea.ico");
 

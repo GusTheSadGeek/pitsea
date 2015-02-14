@@ -83,6 +83,7 @@
             this.Controls.Add(this.CommodityLabel);
             this.Controls.Add(this.CommodityComboBox);
             this.Name = "ChooseExistingCommodityDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Choose Existing Commodity";
             this.ResumeLayout(false);
             this.PerformLayout();

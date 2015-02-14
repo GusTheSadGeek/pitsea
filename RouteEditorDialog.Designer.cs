@@ -32,7 +32,7 @@
             this.CenterSystemComboBox = new System.Windows.Forms.ComboBox();
             this.CenterStationLabel = new System.Windows.Forms.Label();
             this.CenterStationComboBox = new System.Windows.Forms.ComboBox();
-            this.ManifestGrid = new CustomDataGridView();
+            this.ManifestGrid = new Pitsea.CustomDataGridView();
             this.TripsTextBox = new System.Windows.Forms.TextBox();
             this.TripsLabel = new System.Windows.Forms.Label();
             this.ProfitTextBox = new System.Windows.Forms.TextBox();
@@ -182,6 +182,7 @@
             this.Controls.Add(this.CenterSystemComboBox);
             this.Controls.Add(this.CenterSystemLabel);
             this.Name = "RouteEditorDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "RouteEditorDialog";
             ((System.ComponentModel.ISupportInitialize)(this.ManifestGrid)).EndInit();
             this.ResumeLayout(false);
