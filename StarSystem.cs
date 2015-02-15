@@ -96,6 +96,24 @@ namespace Pitsea
             return ret;
         }
 
+        public long distanceFrom(StarSystem ss)
+        {
+            double dx = Math.Abs(ss.Coordinate.x - coordinate.x);
+            double dy = Math.Abs(ss.Coordinate.y - coordinate.y);
+            double dz = Math.Abs(ss.Coordinate.z - coordinate.z);
+            double distSquared = dx * dx + dy * dy + dz * dz;
+            double distance = Math.Sqrt(distSquared);
+            return (long)distance;
+        }
+        public double distanceFromD(StarSystem ss)
+        {
+            double dx = Math.Abs(ss.Coordinate.x - coordinate.x);
+            double dy = Math.Abs(ss.Coordinate.y - coordinate.y);
+            double dz = Math.Abs(ss.Coordinate.z - coordinate.z);
+            double distSquared = dx * dx + dy * dy + dz * dz;
+            return Math.Sqrt(distSquared);
+        }
+
         public bool isNearby(StarSystem ss, double max)
         {
             bool ret = false;

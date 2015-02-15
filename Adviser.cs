@@ -87,6 +87,7 @@ namespace Pitsea
             {
                 if (homeSystem.isNearby(ss, (double)(gameData.JumpDist)))
                 {
+               //     Console.WriteLine(homeSystem.Name + "<---->" + ss.Name + "  #  "+homeSystem.distanceFromD(ss).ToString());
                     if (ss.Jumps() > 1000)
                     {
                         if (neighbours.Find(x => x.Id == ss.Id) == null)
@@ -95,7 +96,7 @@ namespace Pitsea
                         }
                         else
                         {
-                            Console.WriteLine(ss.Name + " @@ ");
+                         //   Console.WriteLine(ss.Name + " @@ ");
                         }
                     }
                 }

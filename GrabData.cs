@@ -163,6 +163,10 @@ namespace Pitsea
 //            Rectangle cropRect = new Rectangle(100, 230, 1250, 650);
 //            Rectangle cropRect = new Rectangle(50, 295, 1250, 750);
             Rectangle cropRect = gcd.SaveGameData.captureRect;
+            if ((cropRect.Width < 100) || (cropRect.Height < 100))
+            {
+                gcd.SaveGameData.captureRect = cropRect = new Rectangle(50, 295, 1250, 750);
+            }
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
             using (Bitmap bmpScreenCapture = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
@@ -297,9 +301,10 @@ namespace Pitsea
 
         private void init_commodities(GameData gcd)
         {
-            foreach (GrabCommodityDatum datum in gcd.CommodityList)
+            foreach (CommodityType commtype in gcd.CommodityTypes)
             {
-                GrabCommodity com = new GrabCommodity(datum);
+                GrabCommodity com = new GrabCommodity(commtype);
+
                 commodities.Add(com);
                 market.add_commoditity(com);
             }
@@ -666,49 +671,49 @@ namespace Pitsea
     }
 
 
-    public class GrabCommodityDatum
-    {
-        private string[] names;
-        private string category;
-        public Int64 id;
+    //public class GrabCommodityDatum
+    //{
+    //    private string[] names;
+    //    private string category;
+    //    public Int64 id;
 
-        public string Category
-        {
-            get { return category; }
-            set { category = value; }
-        }
+    //    public string Category
+    //    {
+    //        get { return category; }
+    //        set { category = value; }
+    //    }
 
-        public string Name
-        {
-            get { 
-                if (names!=null) 
-                    return names[0];
-                else
-                    return null;
-            }
-        }
+    //    public string Name
+    //    {
+    //        get { 
+    //            if (names!=null) 
+    //                return names[0];
+    //            else
+    //                return null;
+    //        }
+    //    }
 
-        public string[] Names
-        {
-            get { return names; }
-            set { names = value; }
-        }
+    //    public string[] Names
+    //    {
+    //        get { return names; }
+    //        set { names = value; }
+    //    }
 
-        public string NiceName
-        {
-            get
-            {
-                if (Name == null) return null;
-                string[] names = Name.Split(' ');
-                StringBuilder sb = new StringBuilder();
-                foreach (string n in names)
-                {
-                    sb.Append(char.ToUpper(n[0]) + n.Substring(1).ToLower() + ' ');
-                }
-                return sb.ToString().Trim();
-            }
-        }
-    }
+    //    public string NiceName
+    //    {
+    //        get
+    //        {
+    //            if (Name == null) return null;
+    //            string[] names = Name.Split(' ');
+    //            StringBuilder sb = new StringBuilder();
+    //            foreach (string n in names)
+    //            {
+    //                sb.Append(char.ToUpper(n[0]) + n.Substring(1).ToLower() + ' ');
+    //            }
+    //            return sb.ToString().Trim();
+    //        }
+    //    }
+    //}
 
 
     public class GrabCommodity
@@ -726,19 +731,19 @@ namespace Pitsea
         private int buyCount;
         public Int64 id;
 
-        public GrabCommodity(GrabCommodityDatum datum)
+        public GrabCommodity(CommodityType commtype)
         {
-            id = datum.id;
-            category = datum.Category;
-            if (datum.Names == null)
-            {
-                cat = true;
-                names = datum.Category.Split(',');
-            }
-            else
+            id = commtype.id;
+            category = commtype.CatName();
+            //if (commtype.scanNames == null)
+            //{
+            //    cat = true;
+            //    names = datum.Category.Split(',');
+            //}
+            //else
             {
                 cat = false;
-                names = datum.Names;
+                names = commtype.scanNames;
             }
         }
 

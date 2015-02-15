@@ -27,8 +27,11 @@ namespace Pitsea
 
         }
 
-        private void FindButton_Click(object sender, EventArgs e)
+
+        private void DisplayFoundCommodity(bool buy=true)
         {
+            StarSystem currentSystem = Main.Instance.GetSeletedSystem();
+            
             string com = commodityComboBox.SelectedItem as string;
 
             bindingTable = new DataTable();
@@ -39,6 +42,7 @@ namespace Pitsea
             bindingTable.Columns.Add("BuyPrice");
             bindingTable.Columns.Add("Supply");
             bindingTable.Columns.Add("LastUpdated");
+            bindingTable.Columns.Add("Distance");
 
             bindingTable.Columns["Star System"].DataType = System.Type.GetType("System.String");
             bindingTable.Columns["Station"].DataType = System.Type.GetType("System.String");
@@ -47,6 +51,7 @@ namespace Pitsea
             bindingTable.Columns["Supply"].DataType = System.Type.GetType("System.Decimal");
             bindingTable.Columns["Supply"].DataType = System.Type.GetType("System.Decimal");
             bindingTable.Columns["LastUpdated"].DataType = System.Type.GetType("System.DateTime");
+            bindingTable.Columns["Distance"].DataType = System.Type.GetType("System.Int64");
 
 
             foreach (StarSystem ss in gameData.StarSystems)
@@ -54,7 +59,7 @@ namespace Pitsea
                 foreach (Station station in ss.Stations)
                 {
                     Commodity commodity = station.Commodities.Find(x => x.NiceName == com);
-                    if (commodity != null)
+                    if ((commodity != null) && ( (buy && (commodity.BuyPrice>0)) || (!buy && (commodity.SellPrice>0))))
                     {
                         DataRow newRow = bindingTable.NewRow();
                         newRow["Star System"] = ss.Name;
@@ -63,23 +68,36 @@ namespace Pitsea
                         newRow["BuyPrice"] = commodity.BuyPrice;
                         newRow["Supply"] = commodity.Supply;
                         newRow["LastUpdated"] = commodity.LastUpdated;
+                        newRow["Distance"] = ss.distanceFrom(currentSystem);
                         bindingTable.Rows.Add(newRow);
                     }
                 }
             }
             dataGridView.DataSource = bindingTable;
 
+            dataGridView.AutoResizeColumns();
+
         }
 
         private void FindCommodity_Load(object sender, EventArgs e)
         {
-            foreach (GrabCommodityDatum datum in grabCommodityData.CommodityList.OrderBy(o => o.Name).ToList())
+            foreach (CommodityType commtype in gameData.CommodityTypes.OrderBy(X => X.name).ToList())
             {
-                if (datum.Name != null)
+                if (commtype.name != null)
                 {
-                    commodityComboBox.Items.Add(datum.NiceName);
+                    commodityComboBox.Items.Add(commtype.name);
                 }
             }
+        }
+
+        private void FindButton_Click(object sender, EventArgs e)
+        {
+            DisplayFoundCommodity(true);
+        }
+
+        private void FindButtonSell_Click(object sender, EventArgs e)
+        {
+            DisplayFoundCommodity(false);
         }
     }
 }

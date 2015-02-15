@@ -18,7 +18,7 @@ namespace Pitsea
 
         public Rectangle captureRect;
         public List<StarSystem> starSystems;
-        public List<GrabCommodityDatum> commodityList;
+       // public List<GrabCommodityDatum> commodityList;
         public decimal capital;
         public decimal cargoSlots;
         public decimal jumpDist;
@@ -34,7 +34,7 @@ namespace Pitsea
             commodityTypes = new List<CommodityType>();
 
             starSystems = new List<StarSystem>();
-            commodityList = new List<GrabCommodityDatum>();
+   //         commodityList = new List<GrabCommodityDatum>();
         }
     }
 
@@ -61,10 +61,10 @@ namespace Pitsea
             set { saveGameData = value; }
         }
 
-        public List<GrabCommodityDatum> CommodityList
-        {
-            get { return saveGameData.commodityList; }
-        }
+        //public List<GrabCommodityDatum> CommodityList
+        //{
+        //    get { return saveGameData.commodityList; }
+        //}
 
 
         public List<CommodityCategory> CommodityCategories

@@ -30,8 +30,9 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.commodityComboBox = new System.Windows.Forms.ComboBox();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridView = new Pitsea.CustomDataGridView();
             this.FindButton = new System.Windows.Forms.Button();
+            this.FindButtonSell = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,24 +59,35 @@
             this.dataGridView.Location = new System.Drawing.Point(2, 39);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGridView.Size = new System.Drawing.Size(666, 552);
+            this.dataGridView.Size = new System.Drawing.Size(742, 552);
             this.dataGridView.TabIndex = 3;
             // 
             // FindButton
             // 
-            this.FindButton.Location = new System.Drawing.Point(466, 9);
+            this.FindButton.Location = new System.Drawing.Point(395, 9);
             this.FindButton.Name = "FindButton";
-            this.FindButton.Size = new System.Drawing.Size(122, 23);
+            this.FindButton.Size = new System.Drawing.Size(129, 23);
             this.FindButton.TabIndex = 4;
-            this.FindButton.Text = "Find Commodity";
+            this.FindButton.Text = "Find Commodity to BUY";
             this.FindButton.UseVisualStyleBackColor = true;
             this.FindButton.Click += new System.EventHandler(this.FindButton_Click);
+            // 
+            // FindButtonSell
+            // 
+            this.FindButtonSell.Location = new System.Drawing.Point(549, 9);
+            this.FindButtonSell.Name = "FindButtonSell";
+            this.FindButtonSell.Size = new System.Drawing.Size(131, 23);
+            this.FindButtonSell.TabIndex = 5;
+            this.FindButtonSell.Text = "Find Commodity to SELL";
+            this.FindButtonSell.UseVisualStyleBackColor = true;
+            this.FindButtonSell.Click += new System.EventHandler(this.FindButtonSell_Click);
             // 
             // FindCommodity
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(669, 592);
+            this.ClientSize = new System.Drawing.Size(745, 614);
+            this.Controls.Add(this.FindButtonSell);
             this.Controls.Add(this.FindButton);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.commodityComboBox);
@@ -94,7 +106,8 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox commodityComboBox;
-        private System.Windows.Forms.DataGridView dataGridView;
+        private CustomDataGridView dataGridView;
         private System.Windows.Forms.Button FindButton;
+        private System.Windows.Forms.Button FindButtonSell;
     }
 }

@@ -95,6 +95,7 @@
     <Compile Include="ChooseExistingCommodityDialog.Designer.cs">
       <DependentUpon>ChooseExistingCommodityDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="InitData.cs" />
     <Compile Include="Commodity.cs" />
     <Compile Include="FindCommodity.cs">
       <SubType>Form</SubType>
@@ -202,6 +203,7 @@
     <EmbeddedResource Include="TradesManifestsRoutesDialog.resx">
       <DependentUpon>TradesManifestsRoutesDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

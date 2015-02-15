@@ -15,8 +15,8 @@ namespace Pitsea
 
         private DataTable bindingTable;
 
-        private static Form _instance;
-        public static Form Instance
+        private static Main _instance;
+        public static Main Instance
         {
             get { return _instance; }
         }
@@ -456,6 +456,7 @@ namespace Pitsea
         private void AutoLoad()
         {
             string lastSavePath = ReadReg("lastsavepath") as string;
+            bool loaded = false;
             if (lastSavePath != null)
             {
                 try
@@ -464,13 +465,17 @@ namespace Pitsea
                     InfoBoxA ib = new InfoBoxA();
                     ib.Show();
                     ib.Message("Autoloading.......");
-                    TryLoadFile(path + @"\autosave.pitdata");
+                    loaded = TryLoadFile(path + @"\autosave.pitdata");
                     ib.Close();
                 }
                 catch
                 {
                     // Fail silently...
                 }
+            }
+            if (!loaded)
+            {
+                TryLoadFile("DEFAULT");
             }
         }
         
@@ -481,8 +486,16 @@ namespace Pitsea
                 gameData.Capital = CapitalNumericUpDown.Value;
                 gameData.CargoSlots = CargoSlotsNumericUpDown.Value;
                 gameData.JumpDist = JumpUpDown.Value;
-                gameData.CurrentStationId = (StationComboBox.SelectedItem as Station).Id;
-                gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id;
+                try
+                {
+                    gameData.CurrentStationId = (StationComboBox.SelectedItem as Station).Id;
+                    gameData.CurrentSystemId = (SystemComboBox.SelectedItem as StarSystem).Id;
+                }
+                catch
+                {
+                    gameData.CurrentStationId = 0;
+                    gameData.CurrentSystemId = 0;
+                }
 
                 StreamWriter fileStream = new StreamWriter(filepath);
                 XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
@@ -517,18 +530,28 @@ namespace Pitsea
             }
         }
 
-        private void TryLoadFile(String filepath)
+        private bool TryLoadFile(String filepath)
         {
+            bool ret = false;
             try
             {
                 {
-
-
-                    StreamReader fileStream = new StreamReader(filepath);
-                    XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
-                    gameData = new GameData();
-                    gameData.SaveGameData = serializer.Deserialize(fileStream) as SaveGameData;
-                    fileStream.Close();
+                    if (filepath == "DEFAULT")
+                    {
+                        gameData = new GameData();
+                        String q = (new InitData()).InitString;
+                        var reader = new StringReader(q);
+                        XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+                        gameData.SaveGameData = serializer.Deserialize(reader) as SaveGameData;
+                    }
+                    else
+                    {
+                        StreamReader fileStream = new StreamReader(filepath);
+                        XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+                        gameData = new GameData();
+                        gameData.SaveGameData = serializer.Deserialize(fileStream) as SaveGameData;
+                        fileStream.Close();
+                    }
 
                     if (gameData == null)
                         throw new Exception();
@@ -540,17 +563,20 @@ namespace Pitsea
                     CapitalNumericUpDown.Value = gameData.Capital;
                     CargoSlotsNumericUpDown.Value = gameData.CargoSlots;
                     JumpUpDown.Value = gameData.JumpDist;
+                    ret = true;
                 }
             }
             catch(Exception e)
             {
                 var a = e;
-                InfoBoxA ib = new InfoBoxA();
-                ib.Message(e.ToString());
-                ib.ShowDialog();
-                ib.Close();
+                ret = false;
+                //InfoBoxA ib = new InfoBoxA();
+                //ib.Message(e.ToString());
+                //ib.ShowDialog();
+                //ib.Close();
                 //               TryOpenSaveFile_0004(openFileDialog);
             }
+            return ret;
         }
 
         private void RefreshSystemComboBox()
@@ -591,9 +617,10 @@ namespace Pitsea
 
 
                 SystemComboBox.DataSource = newDataSource;
-
-                SystemComboBox.SelectedIndex = 0;
-
+                if (newDataSource.Count > 0)
+                {
+                    SystemComboBox.SelectedIndex = 0;
+                }
                 foreach (StarSystem s in (SystemComboBox.DataSource as List<StarSystem>))
                 {
                     if (s.Id == gameData.CurrentSystemId)
@@ -642,9 +669,14 @@ namespace Pitsea
             }
         }
 
-        private Station GetSeletedStation()
+        public Station GetSeletedStation()
         {
             return StationComboBox.SelectedItem as Station;
+        }
+
+        public StarSystem GetSeletedSystem()
+        {
+            return SystemComboBox.SelectedItem as StarSystem;
         }
 
         private void UpdateSelectedStation(List<Commodity> list)
